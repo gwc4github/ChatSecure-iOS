@@ -10,6 +10,7 @@
 
 #import "OTRManagedAccount.h"
 #import "OTREncryptionManager.h"
+#import "CMDEncryptedSQLiteStore.h"
 
 @implementation OTRDatabaseManager
 
@@ -41,15 +42,15 @@
 }
 
 + (BOOL) setupDatabaseWithName:(NSString*)databaseName {
-    NSString *legacyDatabaseName = @"db.sqlite";
-    NSURL * legacyDatabaseURL = [NSPersistentStore MR_urlForStoreName:legacyDatabaseName];
+    //NSString *legacyDatabaseName = @"db.sqlite";
+    //NSURL * legacyDatabaseURL = [NSPersistentStore MR_urlForStoreName:legacyDatabaseName];
     
     
     
     NSURL * databaseURL = [NSPersistentStore MR_urlForStoreName:databaseName];
     
     //[self copyTestDatabaseToDestination:databaseURL];
-    
+    /*
     NSFileManager *fileManager = [NSFileManager defaultManager];
     if ([fileManager fileExistsAtPath:legacyDatabaseURL.path]) {
         // migrate store
@@ -57,7 +58,8 @@
             [fileManager removeItemAtURL:legacyDatabaseURL error:nil];
         }
     }
-    
+     */
+    /*
     NSURL *mom2 = [[NSBundle mainBundle] URLForResource:@"ChatSecure 2" withExtension:@"mom" subdirectory:@"ChatSecure.momd"];
     NSURL *mom3 = [[NSBundle mainBundle] URLForResource:@"ChatSecure 3" withExtension:@"mom" subdirectory:@"ChatSecure.momd"];
     NSManagedObjectModel *version2Model = [[NSManagedObjectModel alloc] initWithContentsOfURL:mom2];
@@ -66,18 +68,54 @@
     if ([self isManagedObjectModel:version2Model compatibleWithStoreAtUrl:databaseURL]) {
         [self migrateAccountsForManagedObjectModel:version2Model toManagedObjectModel:version3Model withStoreUrl:databaseURL];
     }
-    
+    */
     
     [MagicalRecord setShouldAutoCreateManagedObjectModel:NO];
     [MagicalRecord setDefaultModelNamed:@"ChatSecure.momd"];
-    [MagicalRecord setupCoreDataStackWithAutoMigratingSqliteStoreNamed:databaseName];
+    //[MagicalRecord setupCoreDataStackWithAutoMigratingSqliteStoreNamed:databaseName];
+    [self setupEncryptedStoreAtURL:databaseURL password:@"test"];
     
-    [OTREncryptionManager setFileProtection:NSFileProtectionCompleteUntilFirstUserAuthentication path:databaseURL.path];
-    [OTREncryptionManager addSkipBackupAttributeToItemAtURL:databaseURL];
+    //[OTREncryptionManager setFileProtection:NSFileProtectionCompleteUntilFirstUserAuthentication path:databaseURL.path];
+    //[OTREncryptionManager addSkipBackupAttributeToItemAtURL:databaseURL];
     
     [self deleteLegacyXMPPFiles];
     
     return YES;
+}
+
++ (void) setupEncryptedStoreAtURL:(NSURL*)databaseURL password:(NSString*)password {
+    NSError *error = nil;
+
+    // add store
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSURL *applicationSupportURL = [[fileManager URLsForDirectory:NSApplicationSupportDirectory inDomains:NSUserDomainMask] lastObject];
+    NSString *path = [[applicationSupportURL path] stringByAppendingPathComponent:@"ChatSecure"];
+    NSURL *pathURL = [NSURL fileURLWithPath:path];
+    [fileManager createDirectoryAtURL:pathURL withIntermediateDirectories:YES attributes:nil error:nil];
+    
+    NSManagedObjectModel *model = [NSManagedObjectModel MR_defaultManagedObjectModel];
+    NSPersistentStoreCoordinator *coordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:model];
+    
+    NSDictionary *options = @{
+                              CMDEncryptedSQLiteStorePassphraseKey : password,
+                              NSMigratePersistentStoresAutomaticallyOption : @YES,
+                              NSInferMappingModelAutomaticallyOption : @YES,
+                              NSSQLitePragmasOption: @{@"journal_mode": @"WAL"}};
+    NSPersistentStore *store = [coordinator
+                                addPersistentStoreWithType:CMDEncryptedSQLiteStoreType
+                                configuration:nil
+                                URL:databaseURL
+                                options:options
+                                error:&error];
+    if (error) {
+        DDLogError(@"Error setting up encrypted store: %@", store);
+        error = nil;
+    }
+    [NSPersistentStoreCoordinator MR_setDefaultStoreCoordinator:coordinator];
+    
+    [NSManagedObjectContext MR_initializeDefaultContextWithCoordinator:coordinator];
+    
+
 }
 
 + (void) deleteLegacyXMPPFiles {

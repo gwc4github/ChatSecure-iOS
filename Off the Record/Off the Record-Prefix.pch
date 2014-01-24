@@ -17,7 +17,7 @@
 
     #if DEBUG
         static int ddLogLevel = LOG_LEVEL_VERBOSE;
-        #define MR_ENABLE_ACTIVE_RECORD_LOGGING 0
+        #define MR_ENABLE_ACTIVE_RECORD_LOGGING 1
     #else
         static int ddLogLevel = LOG_LEVEL_OFF;
         #define MR_ENABLE_ACTIVE_RECORD_LOGGING 0

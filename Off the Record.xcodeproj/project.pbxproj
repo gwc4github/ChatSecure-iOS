@@ -642,6 +642,13 @@
 			remoteGlobalIDString = D2AAC07D0554694100DB518D;
 			remoteInfo = OAuthTouchStaticLib;
 		};
+		D94CF1E818931CF700C18CEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D910BF1E1891F371000F80B0 /* sqlcipher.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D2AAC045055464E500DB518D;
+			remoteInfo = sqlcipher;
+		};
 		D953117816C6FF1A00AAB1D2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = D953117416C6FF1A00AAB1D2 /* UserVoice.xcodeproj */;
@@ -655,6 +662,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = D2AAC07D0554694100DB518D;
 			remoteInfo = UserVoice;
+		};
+		D9985D801892F08E00EA4F34 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D910BF1E1891F371000F80B0 /* sqlcipher.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D2AAC046055464E500DB518D;
+			remoteInfo = sqlcipher;
 		};
 		D9B24F191808A04E005174C5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1323,8 +1337,8 @@
 		D910BF1E1891F371000F80B0 /* sqlcipher.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sqlcipher.xcodeproj; path = ../vendor/sqlcipher/sqlcipher.xcodeproj; sourceTree = "<group>"; };
 		D910BF331891F3F3000F80B0 /* CMDEncryptedSQLiteStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMDEncryptedSQLiteStore.h; sourceTree = "<group>"; };
 		D910BF341891F3F3000F80B0 /* CMDEncryptedSQLiteStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMDEncryptedSQLiteStore.m; sourceTree = "<group>"; };
-		D910BF361891F50E000F80B0 /* libsqlcipher.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libsqlcipher.a; path = "Submodules/encrypted-core-data/vendor/sqlcipher/build/Debug/libsqlcipher.a"; sourceTree = "<group>"; };
-		D910BF381891F584000F80B0 /* libsqlcipher.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libsqlcipher.a; path = "Submodules/encrypted-core-data/vendor/sqlcipher/build/Debug/libsqlcipher.a"; sourceTree = "<group>"; };
+		D910BF361891F50E000F80B0 /* libsqlcipher.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsqlcipher.a; path = "Submodules/encrypted-core-data/vendor/sqlcipher/build/Debug/libsqlcipher.a"; sourceTree = "<group>"; };
+		D910BF381891F584000F80B0 /* libsqlcipher.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsqlcipher.a; path = "Submodules/encrypted-core-data/vendor/sqlcipher/build/Debug/libsqlcipher.a"; sourceTree = "<group>"; };
 		D913A70313FCA95700C97C1C /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		D913A70513FCA96B00C97C1C /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		D913A70713FCA9AB00C97C1C /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -3278,6 +3292,14 @@
 			name = Value;
 			sourceTree = "<group>";
 		};
+		D9985D721892F08E00EA4F34 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D9985D811892F08E00EA4F34 /* libsqlcipher.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		D9B24F0D1808A04E005174C5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -3902,6 +3924,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				D94CF1E918931CF700C18CEB /* PBXTargetDependency */,
 				D9B24F211808A05B005174C5 /* PBXTargetDependency */,
 				D909671117EA7ADF00440833 /* PBXTargetDependency */,
 				D909664E17EA67CC00440833 /* PBXTargetDependency */,
@@ -4007,6 +4030,10 @@
 					ProjectRef = D9CEED621684235B00B236B5 /* OTRKit.xcodeproj */;
 				},
 				{
+					ProductGroup = D9985D721892F08E00EA4F34 /* Products */;
+					ProjectRef = D910BF1E1891F371000F80B0 /* sqlcipher.xcodeproj */;
+				},
+				{
 					ProductGroup = D953117516C6FF1A00AAB1D2 /* Products */;
 					ProjectRef = D953117416C6FF1A00AAB1D2 /* UserVoice.xcodeproj */;
 				},
@@ -4062,6 +4089,13 @@
 			fileType = archive.ar;
 			path = libUserVoice.a;
 			remoteRef = D953117816C6FF1A00AAB1D2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D9985D811892F08E00EA4F34 /* libsqlcipher.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libsqlcipher.a;
+			remoteRef = D9985D801892F08E00EA4F34 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		D9B24F1A1808A04E005174C5 /* libHockeySDK.a */ = {
@@ -4709,6 +4743,11 @@
 			name = OAuthTouchStaticLib;
 			targetProxy = D909671017EA7ADF00440833 /* PBXContainerItemProxy */;
 		};
+		D94CF1E918931CF700C18CEB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = sqlcipher;
+			targetProxy = D94CF1E818931CF700C18CEB /* PBXContainerItemProxy */;
+		};
 		D953117B16C6FF2F00AAB1D2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = UserVoice;
@@ -5086,7 +5125,7 @@
 				GCC_PREFIX_HEADER = "Off the Record/Off the Record-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					_GCRYPT_IN_LIBGCRYPT,
-					DEBUG,
+					"DEBUG=1",
 					USE_BUFFEREVENTS,
 					SQLITE_HAS_CODEC,
 				);
@@ -5112,7 +5151,10 @@
 					"/Users/david/Documents/chatsecure/Off-the-Record-iOS/Submodules/OnionKit/dependencies/lib",
 					"/Users/david/Documents/chatsecure/Off-the-Record-iOS/Submodules/XMPPFramework/Vendor/libidn",
 				);
-				OTHER_CFLAGS = "-DSQLITE_HAS_CODEC";
+				OTHER_CFLAGS = (
+					"-DSQLITE_HAS_CODEC",
+					"-DDEBUG=1",
+				);
 				OTHER_LDFLAGS = "-all_load";
 				PRODUCT_NAME = ChatSecure;
 				PROVISIONING_PROFILE = "42356564-01E8-41F6-A6B5-8B2A1B7773E4";
