@@ -1267,6 +1267,7 @@
 		63E717E3182AF391004398AD /* SSKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSKeychain.m; sourceTree = "<group>"; };
 		63E717E4182AF391004398AD /* SSKeychainQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSKeychainQuery.h; sourceTree = "<group>"; };
 		63E717E5182AF391004398AD /* SSKeychainQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSKeychainQuery.m; sourceTree = "<group>"; };
+		63EAD8B21893312200AE0821 /* OTRLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTRLog.h; sourceTree = "<group>"; };
 		63EB09491727484D000FACDC /* he */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = he; path = "Off the Record/he.lproj/Localizable.strings"; sourceTree = SOURCE_ROOT; };
 		63EB094A17274AA2000FACDC /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = "Off the Record/es.lproj/Localizable.strings"; sourceTree = SOURCE_ROOT; };
 		63EB094B17274B24000FACDC /* sv */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sv; path = "Off the Record/sv.lproj/Localizable.strings"; sourceTree = SOURCE_ROOT; };
@@ -1323,8 +1324,8 @@
 		D910BF1E1891F371000F80B0 /* sqlcipher.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sqlcipher.xcodeproj; path = ../vendor/sqlcipher/sqlcipher.xcodeproj; sourceTree = "<group>"; };
 		D910BF331891F3F3000F80B0 /* CMDEncryptedSQLiteStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMDEncryptedSQLiteStore.h; sourceTree = "<group>"; };
 		D910BF341891F3F3000F80B0 /* CMDEncryptedSQLiteStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMDEncryptedSQLiteStore.m; sourceTree = "<group>"; };
-		D910BF361891F50E000F80B0 /* libsqlcipher.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libsqlcipher.a; path = "Submodules/encrypted-core-data/vendor/sqlcipher/build/Debug/libsqlcipher.a"; sourceTree = "<group>"; };
-		D910BF381891F584000F80B0 /* libsqlcipher.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libsqlcipher.a; path = "Submodules/encrypted-core-data/vendor/sqlcipher/build/Debug/libsqlcipher.a"; sourceTree = "<group>"; };
+		D910BF361891F50E000F80B0 /* libsqlcipher.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsqlcipher.a; path = "Submodules/encrypted-core-data/vendor/sqlcipher/build/Debug/libsqlcipher.a"; sourceTree = "<group>"; };
+		D910BF381891F584000F80B0 /* libsqlcipher.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsqlcipher.a; path = "Submodules/encrypted-core-data/vendor/sqlcipher/build/Debug/libsqlcipher.a"; sourceTree = "<group>"; };
 		D913A70313FCA95700C97C1C /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		D913A70513FCA96B00C97C1C /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		D913A70713FCA9AB00C97C1C /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -3724,6 +3725,7 @@
 				63FA108116F9290900D9EE45 /* OTRImages.h */,
 				63FA108216F9290900D9EE45 /* OTRImages.m */,
 				6348189517E3E09C004E0146 /* OTRSecrets.h */,
+				63EAD8B21893312200AE0821 /* OTRLog.h */,
 				D9CEF0A81684253B00B236B5 /* XMPPFramework.h */,
 				D9D8D1F61531056300F9E8D3 /* Resources */,
 				D9F9378113F44BD3009A3D84 /* Supporting Files */,
