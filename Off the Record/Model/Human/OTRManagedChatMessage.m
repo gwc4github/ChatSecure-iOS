@@ -67,7 +67,7 @@
     
     managedMessage.uniqueID = [OTRUtilities uniqueString];
     managedMessage.buddy = theBuddy;
-    managedMessage.chatBuddy = theBuddy;
+    //managedMessage.chatBuddy = theBuddy;
     managedMessage.message = [OTRUtilities stripHTML:theMessage];
     managedMessage.date = [NSDate date];
     managedMessage.isEncryptedValue = YES;

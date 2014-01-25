@@ -186,7 +186,7 @@
 
 -(NSInteger) numberOfUnreadMessages
 {
-    NSPredicate * buddyPredicate = [NSPredicate predicateWithFormat:@"%K == %@",OTRManagedChatMessageRelationships.chatBuddy,self];
+    NSPredicate * buddyPredicate = [NSPredicate predicateWithFormat:@"%K == %@",OTRManagedMessageRelationships.buddy,self];
     NSPredicate * readPredicate = [NSPredicate predicateWithFormat:@"%K == NO",OTRManagedChatMessageAttributes.isRead];
     NSPredicate * encryptedPredicate = [NSPredicate predicateWithFormat:@"%K == NO",OTRManagedMessageAttributes.isEncrypted];
     NSPredicate * incomingPredicate = [NSPredicate predicateWithFormat:@"%K == YES",OTRManagedMessageAttributes.isIncoming];

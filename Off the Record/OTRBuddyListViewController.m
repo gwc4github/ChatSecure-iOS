@@ -497,7 +497,7 @@
         return _recentBuddiesFetchedResultsController;
     }
     /// Maybe instead do a fetch on OTRManagedChatMessage and group by buddy sections -> rows in table
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"(SUBQUERY(%K, $message, $message.isEncrypted == NO).@count != 0)",OTRManagedBuddyRelationships.chatMessages];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"(SUBQUERY(%K, $message, $message.isEncrypted == NO).@count != 0)",OTRManagedBuddyRelationships.messages];
     NSPredicate * buddyFilter = [NSPredicate predicateWithFormat:@"%K != nil OR %K != nil",OTRManagedBuddyAttributes.accountName,OTRManagedBuddyAttributes.displayName];
     NSPredicate * compoundPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[predicate,buddyFilter]];
      

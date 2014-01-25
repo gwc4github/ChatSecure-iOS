@@ -344,7 +344,6 @@
 		D910BF0D1891E651000F80B0 /* XMPPXOAuth2Google.m in Sources */ = {isa = PBXBuildFile; fileRef = D910BF0C1891E651000F80B0 /* XMPPXOAuth2Google.m */; };
 		D910BF101891E686000F80B0 /* AFSecurityPolicy.m in Sources */ = {isa = PBXBuildFile; fileRef = D910BF0F1891E686000F80B0 /* AFSecurityPolicy.m */; };
 		D910BF141891E79A000F80B0 /* XMPPProxyStream.m in Sources */ = {isa = PBXBuildFile; fileRef = D910BF131891E79A000F80B0 /* XMPPProxyStream.m */; };
-		D910BF351891F3F3000F80B0 /* CMDEncryptedSQLiteStore.m in Sources */ = {isa = PBXBuildFile; fileRef = D910BF341891F3F3000F80B0 /* CMDEncryptedSQLiteStore.m */; };
 		D910BF391891F584000F80B0 /* libsqlcipher.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D910BF381891F584000F80B0 /* libsqlcipher.a */; };
 		D913A70413FCA95700C97C1C /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D913A70313FCA95700C97C1C /* CoreText.framework */; };
 		D913A70813FCA9AB00C97C1C /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D913A70713FCA9AB00C97C1C /* QuartzCore.framework */; };
@@ -410,6 +409,7 @@
 		D974DABD15021E540028B2F4 /* libiconv.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D974DABC15021E540028B2F4 /* libiconv.dylib */; };
 		D97BF53B160150CF00DA91F9 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D97BF53A160150CE00DA91F9 /* Default-568h@2x.png */; };
 		D989E88E15D4F92E0081DFD1 /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D989E88D15D4F92E0081DFD1 /* Twitter.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		D98C4D071893418400343A66 /* EncryptedStore.m in Sources */ = {isa = PBXBuildFile; fileRef = D98C4D061893418400343A66 /* EncryptedStore.m */; };
 		D99071B2151EB5C6002CECC9 /* 08-chat@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D99071AF151EB5C5002CECC9 /* 08-chat@2x.png */; };
 		D99071B3151EB5C6002CECC9 /* 19-gear@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D99071B0151EB5C5002CECC9 /* 19-gear@2x.png */; };
 		D99071B4151EB5C6002CECC9 /* 112-group@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D99071B1151EB5C5002CECC9 /* 112-group@2x.png */; };
@@ -1336,8 +1336,6 @@
 		D910BF121891E79A000F80B0 /* XMPPProxyStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMPPProxyStream.h; sourceTree = "<group>"; };
 		D910BF131891E79A000F80B0 /* XMPPProxyStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMPPProxyStream.m; sourceTree = "<group>"; };
 		D910BF1E1891F371000F80B0 /* sqlcipher.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = sqlcipher.xcodeproj; path = ../vendor/sqlcipher/sqlcipher.xcodeproj; sourceTree = "<group>"; };
-		D910BF331891F3F3000F80B0 /* CMDEncryptedSQLiteStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMDEncryptedSQLiteStore.h; sourceTree = "<group>"; };
-		D910BF341891F3F3000F80B0 /* CMDEncryptedSQLiteStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMDEncryptedSQLiteStore.m; sourceTree = "<group>"; };
 		D910BF361891F50E000F80B0 /* libsqlcipher.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsqlcipher.a; path = "Submodules/encrypted-core-data/vendor/sqlcipher/build/Debug/libsqlcipher.a"; sourceTree = "<group>"; };
 		D910BF381891F584000F80B0 /* libsqlcipher.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsqlcipher.a; path = "Submodules/encrypted-core-data/vendor/sqlcipher/build/Debug/libsqlcipher.a"; sourceTree = "<group>"; };
 		D913A70313FCA95700C97C1C /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
@@ -1445,6 +1443,8 @@
 		D974DABC15021E540028B2F4 /* libiconv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libiconv.dylib; path = usr/lib/libiconv.dylib; sourceTree = SDKROOT; };
 		D97BF53A160150CE00DA91F9 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
 		D989E88D15D4F92E0081DFD1 /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
+		D98C4D051893418400343A66 /* EncryptedStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncryptedStore.h; sourceTree = "<group>"; };
+		D98C4D061893418400343A66 /* EncryptedStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EncryptedStore.m; sourceTree = "<group>"; };
 		D99071AF151EB5C5002CECC9 /* 08-chat@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "08-chat@2x.png"; sourceTree = "<group>"; };
 		D99071B0151EB5C5002CECC9 /* 19-gear@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "19-gear@2x.png"; sourceTree = "<group>"; };
 		D99071B1151EB5C5002CECC9 /* 112-group@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "112-group@2x.png"; sourceTree = "<group>"; };
@@ -3151,9 +3151,9 @@
 		D910BF321891F3F3000F80B0 /* encrypted-core-data */ = {
 			isa = PBXGroup;
 			children = (
+				D98C4D051893418400343A66 /* EncryptedStore.h */,
+				D98C4D061893418400343A66 /* EncryptedStore.m */,
 				D910BF1E1891F371000F80B0 /* sqlcipher.xcodeproj */,
-				D910BF331891F3F3000F80B0 /* CMDEncryptedSQLiteStore.h */,
-				D910BF341891F3F3000F80B0 /* CMDEncryptedSQLiteStore.m */,
 			);
 			name = "encrypted-core-data";
 			path = "Submodules/encrypted-core-data/Incremental Store";
@@ -4410,7 +4410,6 @@
 				D92D57861844278E00670832 /* ASIDataCompressor.m in Sources */,
 				D9CEEE7B168423CA00B236B5 /* AIMLoginHostInfo.m in Sources */,
 				D9CEEE7C168423CA00B236B5 /* AIMMessage.m in Sources */,
-				D910BF351891F3F3000F80B0 /* CMDEncryptedSQLiteStore.m in Sources */,
 				6370C976185FC58C00CB6786 /* OTRTitleSubtitleView.m in Sources */,
 				D9CEEE7D168423CA00B236B5 /* AIMMessageParser.m in Sources */,
 				D9CEEE7E168423CA00B236B5 /* AIMMissedCall.m in Sources */,
@@ -4517,6 +4516,7 @@
 				63E5E7F416D1D5BC006E2B01 /* NSManagedObjectContext+MagicalObserving.m in Sources */,
 				63E5E7F516D1D5BC006E2B01 /* NSManagedObjectContext+MagicalRecord.m in Sources */,
 				63E5E7F616D1D5BC006E2B01 /* NSManagedObjectContext+MagicalSaves.m in Sources */,
+				D98C4D071893418400343A66 /* EncryptedStore.m in Sources */,
 				63E5E7F716D1D5BC006E2B01 /* NSManagedObjectContext+MagicalThreading.m in Sources */,
 				63E717E8182AF391004398AD /* SSKeychainQuery.m in Sources */,
 				63E5E7F816D1D5BC006E2B01 /* NSManagedObjectModel+MagicalRecord.m in Sources */,

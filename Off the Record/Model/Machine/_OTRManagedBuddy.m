@@ -17,7 +17,6 @@ const struct OTRManagedBuddyAttributes OTRManagedBuddyAttributes = {
 
 const struct OTRManagedBuddyRelationships OTRManagedBuddyRelationships = {
 	.account = @"account",
-	.chatMessages = @"chatMessages",
 	.groups = @"groups",
 	.messages = @"messages",
 };
@@ -219,19 +218,6 @@ const struct OTRManagedBuddyFetchedProperties OTRManagedBuddyFetchedProperties =
 
 @dynamic account;
 
-	
-
-@dynamic chatMessages;
-
-	
-- (NSMutableSet*)chatMessagesSet {
-	[self willAccessValueForKey:@"chatMessages"];
-  
-	NSMutableSet *result = (NSMutableSet*)[self mutableSetValueForKey:@"chatMessages"];
-  
-	[self didAccessValueForKey:@"chatMessages"];
-	return result;
-}
 	
 
 @dynamic groups;

@@ -18,7 +18,6 @@ extern const struct OTRManagedBuddyAttributes {
 
 extern const struct OTRManagedBuddyRelationships {
 	__unsafe_unretained NSString *account;
-	__unsafe_unretained NSString *chatMessages;
 	__unsafe_unretained NSString *groups;
 	__unsafe_unretained NSString *messages;
 } OTRManagedBuddyRelationships;
@@ -27,7 +26,6 @@ extern const struct OTRManagedBuddyFetchedProperties {
 } OTRManagedBuddyFetchedProperties;
 
 @class OTRManagedAccount;
-@class OTRManagedChatMessage;
 @class OTRManagedGroup;
 @class OTRManagedMessage;
 
@@ -167,13 +165,6 @@ extern const struct OTRManagedBuddyFetchedProperties {
 
 
 
-@property (nonatomic, strong) NSSet *chatMessages;
-
-- (NSMutableSet*)chatMessagesSet;
-
-
-
-
 @property (nonatomic, strong) NSSet *groups;
 
 - (NSMutableSet*)groupsSet;
@@ -192,11 +183,6 @@ extern const struct OTRManagedBuddyFetchedProperties {
 @end
 
 @interface _OTRManagedBuddy (CoreDataGeneratedAccessors)
-
-- (void)addChatMessages:(NSSet*)value_;
-- (void)removeChatMessages:(NSSet*)value_;
-- (void)addChatMessagesObject:(OTRManagedChatMessage*)value_;
-- (void)removeChatMessagesObject:(OTRManagedChatMessage*)value_;
 
 - (void)addGroups:(NSSet*)value_;
 - (void)removeGroups:(NSSet*)value_;
@@ -282,11 +268,6 @@ extern const struct OTRManagedBuddyFetchedProperties {
 
 - (OTRManagedAccount*)primitiveAccount;
 - (void)setPrimitiveAccount:(OTRManagedAccount*)value;
-
-
-
-- (NSMutableSet*)primitiveChatMessages;
-- (void)setPrimitiveChatMessages:(NSMutableSet*)value;
 
 
 

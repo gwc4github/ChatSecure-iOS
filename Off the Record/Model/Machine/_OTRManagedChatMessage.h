@@ -11,13 +11,11 @@ extern const struct OTRManagedChatMessageAttributes {
 } OTRManagedChatMessageAttributes;
 
 extern const struct OTRManagedChatMessageRelationships {
-	__unsafe_unretained NSString *chatBuddy;
 } OTRManagedChatMessageRelationships;
 
 extern const struct OTRManagedChatMessageFetchedProperties {
 } OTRManagedChatMessageFetchedProperties;
 
-@class OTRManagedBuddy;
 
 
 
@@ -74,13 +72,6 @@ extern const struct OTRManagedChatMessageFetchedProperties {
 
 
 
-@property (nonatomic, strong) OTRManagedBuddy *chatBuddy;
-
-//- (BOOL)validateChatBuddy:(id*)value_ error:(NSError**)error_;
-
-
-
-
 
 @end
 
@@ -113,11 +104,6 @@ extern const struct OTRManagedChatMessageFetchedProperties {
 - (void)setPrimitiveUniqueID:(NSString*)value;
 
 
-
-
-
-- (OTRManagedBuddy*)primitiveChatBuddy;
-- (void)setPrimitiveChatBuddy:(OTRManagedBuddy*)value;
 
 
 @end

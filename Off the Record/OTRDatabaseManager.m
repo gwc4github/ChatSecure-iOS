@@ -10,7 +10,7 @@
 
 #import "OTRManagedAccount.h"
 #import "OTREncryptionManager.h"
-#import "CMDEncryptedSQLiteStore.h"
+#import "EncryptedStore.h"
 
 #import "OTRLog.h"
 
@@ -99,12 +99,12 @@
     NSPersistentStoreCoordinator *coordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:model];
     
     NSDictionary *options = @{
-                              CMDEncryptedSQLiteStorePassphraseKey : password,
+                              EncryptedStorePassphraseKey : password,
                               NSMigratePersistentStoresAutomaticallyOption : @YES,
                               NSInferMappingModelAutomaticallyOption : @YES,
                               NSSQLitePragmasOption: @{@"journal_mode": @"WAL"}};
     NSPersistentStore *store = [coordinator
-                                addPersistentStoreWithType:CMDEncryptedSQLiteStoreType
+                                addPersistentStoreWithType:EncryptedStoreType
                                 configuration:nil
                                 URL:databaseURL
                                 options:options
@@ -116,8 +116,6 @@
     [NSPersistentStoreCoordinator MR_setDefaultStoreCoordinator:coordinator];
     
     [NSManagedObjectContext MR_initializeDefaultContextWithCoordinator:coordinator];
-    
-
 }
 
 + (void) deleteLegacyXMPPFiles {

@@ -10,7 +10,6 @@ const struct OTRManagedChatMessageAttributes OTRManagedChatMessageAttributes = {
 };
 
 const struct OTRManagedChatMessageRelationships OTRManagedChatMessageRelationships = {
-	.chatBuddy = @"chatBuddy",
 };
 
 const struct OTRManagedChatMessageFetchedProperties OTRManagedChatMessageFetchedProperties = {
@@ -117,10 +116,6 @@ const struct OTRManagedChatMessageFetchedProperties OTRManagedChatMessageFetched
 
 
 
-
-@dynamic chatBuddy;
-
-	
 
 
 
