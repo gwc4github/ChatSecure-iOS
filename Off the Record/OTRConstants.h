@@ -86,21 +86,23 @@ static CGFloat const messageSentDateLabelHeight  = sentDateFontSize + 7;
 static CGFloat const messageDeliveredLabelHeight = deliveredFontSize + 7;
 
 
-typedef enum {
+
+typedef NS_ENUM(int16_t, OTRChatState) {
     kOTRChatStateUnknown   = 0,
     kOTRChatStateActive    = 1,
     kOTRChatStateComposing = 2,
     kOTRChatStatePaused    = 3,
     kOTRChatStateInactive  = 4,
     kOTRChatStateGone      = 5
-} OTRChatState;
+};
 
 typedef NS_ENUM(NSUInteger, OTRAccountType) {
     OTRAccountTypeNone        = 0,
     OTRAccountTypeFacebook    = 1,
     OTRAccountTypeGoogleTalk  = 2,
     OTRAccountTypeJabber      = 3,
-    OTRAccountTypeAIM         = 4
+    OTRAccountTypeAIM         = 4,
+    OTRAccountTypeXMPPTor     = 5
 };
 
 typedef NS_ENUM(NSUInteger, OTRProtocolType) {

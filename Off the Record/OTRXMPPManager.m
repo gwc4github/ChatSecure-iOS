@@ -48,12 +48,16 @@
 #import "OTRProtocolManager.h"
 #include <stdlib.h>
 #import "XMPPXFacebookPlatformAuthentication.h"
-#import "XMPPXOATH2Google.h"
+#import "XMPPXOAuth2Google.h"
 #import "OTRConstants.h"
 #import "OTRUtilities.h"
 
 static NSTimeInterval const kOTRChatStatePausedTimeout   = 5;
 static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
+
+NSString *const OTRXMPPRegisterSucceededNotificationName = @"OTRXMPPRegisterSucceededNotificationName";
+NSString *const OTRXMPPRegisterFailedNotificationName    = @"OTRXMPPRegisterFailedNotificationName";
+
 
 @interface OTRXMPPManager()
 
@@ -62,14 +66,14 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
 
 - (void)goOnline;
 - (void)goOffline;
-- (void)failedToConnect:(id)error;
+- (void)failedToConnect:(NSError *)error;
 
 @end
 
 
 @implementation OTRXMPPManager
 
-@synthesize xmppStream;
+@synthesize xmppStream = _xmppStream;
 @synthesize xmppReconnect;
 @synthesize xmppRoster;
 @synthesize xmppRosterStorage;
@@ -77,7 +81,6 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
 @synthesize xmppvCardAvatarModule;
 @synthesize xmppCapabilities;
 @synthesize xmppCapabilitiesStorage;
-@synthesize isXmppConnected;
 @synthesize account;
 @synthesize buddyTimers;
 @synthesize certificatePinningModule = _certificatePinningModule;
@@ -88,6 +91,7 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
     
     if(self)
     {
+        isRegisteringNewAccount = NO;
         self.isConnected = NO;
         self.account = (OTRManagedXMPPAccount*)newAccount;
 
@@ -98,9 +102,7 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
         // Setup the XMPP stream
         [self setupStream];
         
-        //[self setupStream];
         buddyTimers = [NSMutableDictionary dictionary];
-        
     }
     
     return self;
@@ -117,22 +119,8 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
 
 - (void)setupStream
 {
-	NSAssert(xmppStream == nil, @"Method setupStream invoked multiple times");
-	
-	// Setup xmpp stream
-	// 
-	// The XMPPStream is the base class for all activity.
-	// Everything else plugs into the xmppStream, such as modules/extensions and delegates.
-    
-	if (self.account.accountType == OTRAccountTypeFacebook) {
-        xmppStream = [[XMPPStream alloc] initWithFacebookAppId:FACEBOOK_APP_ID];
-    }
-    else{
-        xmppStream = [[XMPPStream alloc] init];
-    }
-    
-    xmppStream.autoStartTLS = YES;
-    
+	NSAssert(_xmppStream == nil, @"Method setupStream invoked multiple times");
+
     [self.certificatePinningModule activate:self.xmppStream];
     
     XMPPMessageDeliveryReceipts * deliveryReceiptsMoodule = [[XMPPMessageDeliveryReceipts alloc] init];
@@ -225,15 +213,15 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
     
 	// Activate xmpp modules
     
-	[xmppReconnect         activate:xmppStream];
-	[xmppRoster            activate:xmppStream];
-	[xmppvCardTempModule   activate:xmppStream];
-	[xmppvCardAvatarModule activate:xmppStream];
-	[xmppCapabilities      activate:xmppStream];
+	[xmppReconnect         activate:self.xmppStream];
+	[xmppRoster            activate:self.xmppStream];
+	[xmppvCardTempModule   activate:self.xmppStream];
+	[xmppvCardAvatarModule activate:self.xmppStream];
+	[xmppCapabilities      activate:self.xmppStream];
     
 	// Add ourself as a delegate to anything we may be interested in
     
-	[xmppStream addDelegate:self delegateQueue:dispatch_get_main_queue()];
+	[self.xmppStream addDelegate:self delegateQueue:dispatch_get_main_queue()];
 	[xmppRoster addDelegate:self delegateQueue:dispatch_get_main_queue()];
     [xmppCapabilities addDelegate:self delegateQueue:dispatch_get_main_queue()];
     
@@ -254,7 +242,7 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
 
 - (void)teardownStream
 {
-	[xmppStream removeDelegate:self];
+	[self.xmppStream removeDelegate:self];
 	[xmppRoster removeDelegate:self];
 	
 	[xmppReconnect         deactivate];
@@ -263,9 +251,9 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
 	[xmppvCardAvatarModule deactivate];
 	[xmppCapabilities      deactivate];
 	
-	[xmppStream disconnect];
+	[self.xmppStream disconnect];
 	
-	xmppStream = nil;
+	_xmppStream = nil;
 	xmppReconnect = nil;
     xmppRoster = nil;
 	xmppRosterStorage = nil;
@@ -287,6 +275,25 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
 // For more information on working with XML elements, see the Wiki article:
 // http://code.google.com/p/xmppframework/wiki/WorkingWithElements
 
+- (Class) xmppStreamClass {
+    return [XMPPStream class];
+}
+
+- (XMPPStream *)xmppStream
+{
+    if(!_xmppStream)
+    {
+        if (self.account.accountType == OTRAccountTypeFacebook) {
+            _xmppStream = [[[self xmppStreamClass] alloc] initWithFacebookAppId:FACEBOOK_APP_ID];
+        }
+        else{
+            _xmppStream = [[[self xmppStreamClass] alloc] init];
+        }
+        _xmppStream.autoStartTLS = YES;
+    }
+    return _xmppStream;
+}
+
 - (void)goOnline
 {
     [[NSNotificationCenter defaultCenter]
@@ -294,7 +301,6 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
 	XMPPPresence *presence = [XMPPPresence presence]; // type="available" is implicit
 	
 	[[self xmppStream] sendElement:presence];
-    //[self fetchedResultsController];
 }
 
 - (void)goOffline
@@ -304,7 +310,12 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
 	[[self xmppStream] sendElement:presence];
 }
 
-- (void)failedToConnect:(id)error
+- (NSString *)accountDomainWithError:(NSError**)error;
+{
+    return self.account.domain;
+}
+
+- (void)failedToConnect:(NSError *)error
 {
     if (error) {
         [[NSNotificationCenter defaultCenter]
@@ -314,7 +325,51 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
         [[NSNotificationCenter defaultCenter]
          postNotificationName:kOTRProtocolLoginFail object:self];
     }
+}
+
+- (void)didRegisterNewAccount
+{
+    isRegisteringNewAccount = NO;
+    [[NSNotificationCenter defaultCenter] postNotificationName:OTRXMPPRegisterSucceededNotificationName object:self];
+}
+- (void)failedToRegisterNewAccount:(NSError *)error
+{
+    if (error) {
+        [[NSNotificationCenter defaultCenter]
+         postNotificationName:OTRXMPPRegisterFailedNotificationName object:self userInfo:@{kOTRProtocolLoginFailErrorKey:error}];
+    }
+    else {
+        [[NSNotificationCenter defaultCenter]
+         postNotificationName:OTRXMPPRegisterFailedNotificationName object:self];
+    }
+}
+
+- (void)refreshStreamJID:(NSString *)myJID withPassword:(NSString *)myPassword
+{
+    int r = arc4random() % 99999;
     
+    NSString * resource = [NSString stringWithFormat:@"%@%d",kOTRXMPPResource,r];
+    
+    JID = [XMPPJID jidWithString:myJID resource:resource];
+    
+	[self.xmppStream setMyJID:JID];
+    
+    password = myPassword;
+
+}
+
+- (void)authenticateWithStream:(XMPPStream *)stream {
+    NSError * error = nil;
+    BOOL status = YES;
+    if ([stream supportsXFacebookPlatformAuthentication]) {
+        status = [stream authenticateWithFacebookAccessToken:password error:&error];
+    }
+    else if ([stream supportsXOAuth2GoogleAuthentication] && self.account.accountType == OTRAccountTypeGoogleTalk) {
+        status = [stream authenticateWithGoogleAccessToken:password error:&error];
+    }
+    else {
+        status = [stream authenticateWithPassword:password error:&error];
+    }
 }
 
 ///////////////////////////////
@@ -331,8 +386,16 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
 
 - (BOOL)connectWithJID:(NSString*) myJID password:(NSString*)myPassword;
 {
+    if (myJID == nil || myPassword == nil) {
+		DDLogWarn(@"JID and password must be set before connecting!");
+		return NO;
+	}
+    
+    [self refreshStreamJID:myJID withPassword:myPassword];
+    
     //DDLogInfo(@"myJID %@",myJID);
-	if (![xmppStream isDisconnected]) {
+	if (![self.xmppStream isDisconnected]) {
+        [self authenticateWithStream:self.xmppStream];
 		return YES;
 	}
     
@@ -344,29 +407,24 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
 	//	myJID = @"user@gmail.com/xmppframework";
 	//	myPassword = @"";
     
-	if (myJID == nil || myPassword == nil) {
-		DDLogWarn(@"JID and password must be set before connecting!");
-        
-		return NO;
-	}
+	
     
     
-    int r = arc4random() % 99999;
-    
-    NSString * resource = [NSString stringWithFormat:@"%@%d",kOTRXMPPResource,r];
-    
-    JID = [XMPPJID jidWithString:myJID resource:resource];
-    
-	[xmppStream setMyJID:JID];
-    if (self.account.domain.length > 0) {
-        [xmppStream setHostName:self.account.domain];
+    NSError * error = nil;
+    NSString * domainString = [self accountDomainWithError:&error];
+    if (error) {
+        [self failedToConnect:error];
+        return;
+    }
+    if (domainString.length) {
+        [self.xmppStream setHostName:domainString];
     }
     
-    [xmppStream setHostPort:self.account.portValue];
-	password = myPassword;
+    [self.xmppStream setHostPort:self.account.portValue];
+	
     
-	NSError *error = nil;
-	if (![xmppStream connectWithTimeout:XMPPStreamTimeoutNone error:&error])
+	error = nil;
+	if (![self.xmppStream connectWithTimeout:XMPPStreamTimeoutNone error:&error])
 	{
 		UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error connecting" 
 		                                                    message:@"See console for error details." 
@@ -386,7 +444,7 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
 - (void)disconnect {
     [self goOffline];
     
-    [xmppStream disconnect];
+    [self.xmppStream disconnect];
     
     [self.account setAllBuddiesStatuts:OTRBuddyStatusOffline];
     
@@ -395,10 +453,35 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
         [self.account deleteAllConversationsForAccount];
     }
     
-    
-    
     [self.xmppRosterStorage clearAllUsersAndResourcesForXMPPStream:self.xmppStream];
     
+}
+
+- (void)registerNewAccountWithPassword:(NSString *)newPassword
+{
+    isRegisteringNewAccount = YES;
+    if (self.xmppStream.isConnected) {
+        [self registerNewAccountWithPassword:newPassword stream:self.xmppStream];
+    }
+    else {
+        [self connectWithJID:self.account.username password:newPassword];
+    }
+}
+
+- (void)registerNewAccountWithPassword:(NSString *)newPassword stream:(XMPPStream *)stream
+{
+    NSError * error = nil;
+    if ([stream supportsInBandRegistration]) {
+        [stream registerWithPassword:password error:&error];
+        if(error)
+        {
+            [self failedToRegisterNewAccount:error];
+        }
+    }
+    else{
+        error = [NSError errorWithDomain:OTRXMPPErrorDomain code:OTRXMPPUnsupportedAction userInfo:nil];
+        [self failedToRegisterNewAccount:error];
+    }
 }
 
 
@@ -434,47 +517,44 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
 - (void)xmppStreamDidConnect:(XMPPStream *)sender
 {
 	DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
-	
-	self.isConnected = YES;
     
-	NSError *error = nil;
-    
-    if ([sender supportsXFacebookPlatformAuthentication]) {
-        
-        isXmppConnected = [sender authenticateWithFacebookAccessToken:password error:&error];
-        return;
+    if (isRegisteringNewAccount) {
+        [self registerNewAccountWithPassword:password stream:sender];
     }
-    else if ([sender supportsXOAUTH2GoogleAuthentication] && self.account.accountType == OTRAccountTypeGoogleTalk) {
-        isXmppConnected = [sender authenticateWithGoogleAccessToken:password error:&error];
-        return;
+    else{
+        [self authenticateWithStream:sender];
     }
-	else if (![[self xmppStream] authenticateWithPassword:password error:&error])
-	{
-        isXmppConnected = NO;
-        return;
-	}
-    
-    isXmppConnected = YES;
 }
 
 - (void)xmppStreamDidAuthenticate:(XMPPStream *)sender
 {
 	DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
+    self.isConnected = YES;
 	[self goOnline];
 }
 
 - (void)xmppStream:(XMPPStream *)sender didNotAuthenticate:(NSXMLElement *)error
 {
-    
 	DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
-    [self failedToConnect:error];
+    self.isConnected = NO;
+    [self failedToConnect:[OTRXMPPError errorForXMLElement:error]];
 }
 
 - (BOOL)xmppStream:(XMPPStream *)sender didReceiveIQ:(XMPPIQ *)iq
 {
 	DDLogVerbose(@"%@: %@ - %@", THIS_FILE, THIS_METHOD, [iq elementID]);
-	
 	return NO;
+}
+
+- (void)xmppStreamDidRegister:(XMPPStream *)sender {
+    [self didRegisterNewAccount];
+}
+
+- (void)xmppStream:(XMPPStream *)sender didNotRegister:(NSXMLElement *)xmlError {
+    
+    isRegisteringNewAccount = NO;
+    NSError * error = [OTRXMPPError errorForXMLElement:xmlError];
+    [self failedToRegisterNewAccount:error];
 }
 
 -(OTRManagedBuddy *)buddyWithMessage:(XMPPMessage *)message
@@ -504,7 +584,7 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
     }
     
     if ([message hasReceiptResponse] && ![message isErrorMessage]) {
-        [OTRManagedMessage receivedDeliveryReceiptForMessageID:[message receiptResponseID]];
+        [OTRManagedChatMessage receivedDeliveryReceiptForMessageID:[message receiptResponseID]];
     }
     
 	if ([message isMessageWithBody] && ![message isErrorMessage])
@@ -515,7 +595,8 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
         
         NSDate * date = [message delayedDeliveryDate];
         
-        OTRManagedMessage *otrMessage = [OTRManagedMessage newMessageFromBuddy:messageBuddy message:body encrypted:YES delayedDate:date];
+        
+        OTRManagedChatMessage *otrMessage = [OTRManagedChatMessage newMessageFromBuddy:messageBuddy message:body encrypted:YES delayedDate:date];
         [OTRCodec decodeMessage:otrMessage completionBlock:^(OTRManagedMessage *message) {
             [OTRManagedMessage showLocalNotificationForMessage:message];
         }];
@@ -525,11 +606,6 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
 - (void)xmppStream:(XMPPStream *)sender didReceivePresence:(XMPPPresence *)presence
 {
 	DDLogVerbose(@"%@: %@ - %@\nType: %@\nShow: %@\nStatus: %@", THIS_FILE, THIS_METHOD, [presence from], [presence type], [presence show],[presence status]);
-    /*
-    [[NSNotificationCenter defaultCenter]
-     postNotificationName:kOTRStatusUpdate
-     object:self userInfo:[NSDictionary dictionaryWithObjectsAndKeys: [[presence from]bare] ,@"user", nil]];
-     */
 }
 
 - (void)xmppStream:(XMPPStream *)sender didReceiveError:(id)error
@@ -540,19 +616,17 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
 - (void)xmppStreamDidDisconnect:(XMPPStream *)sender withError:(NSError *)error
 {
 	DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
-    [[NSNotificationCenter defaultCenter]
-     postNotificationName:kOTRProtocolDiconnect object:self];
     
-    self.isConnected = NO;
-	
-	if (!isXmppConnected)
+	if (!self.isConnected)
 	{
 		DDLogError(@"Unable to connect to server. Check xmppStream.hostName");
         [self failedToConnect:error];
 	}
     else {
-        //Lost connection
+        [[NSNotificationCenter defaultCenter]
+         postNotificationName:kOTRProtocolDiconnect object:self];
     }
+    self.isConnected = NO;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -573,7 +647,7 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
 #pragma mark OTRProtocol 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void) sendMessage:(OTRManagedMessage*)theMessage
+- (void) sendMessage:(OTRManagedChatMessage*)theMessage
 {
     NSString *messageStr = theMessage.message;
     
@@ -585,7 +659,7 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
 
         [xmppMessage addActiveChatState];
 		
-		[xmppStream sendElement:xmppMessage];
+		[self.xmppStream sendElement:xmppMessage];
     }
 }
 
@@ -668,7 +742,7 @@ static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
             [buddy setLastSentChatStateValue:chatState];
             NSManagedObjectContext *context = [NSManagedObjectContext MR_contextForCurrentThread];
             [context MR_saveToPersistentStoreAndWait];
-            [xmppStream sendElement:message];
+            [self.xmppStream sendElement:message];
         }
 
     });
@@ -791,7 +865,7 @@ managedBuddyObjectID
     
     dispatch_async(dispatch_get_main_queue(), ^{
         NSData * certifcateData = [OTRCertificatePinning dataForCertificate:[OTRCertificatePinning certForTrust:trust]];
-        [[NSNotificationCenter defaultCenter] postNotificationName:kOTRProtocolLoginFail object:self userInfo:@{kOTRProtocolLoginFailSSLStatusKey:[NSNumber numberWithLong:status],kOTRProtocolLoginFailSSLCertificateDataKey:certifcateData,kOTRProtocolLoginFailHostnameKey:hostname}];
+        [self failedToConnect:[OTRXMPPError errorForSSLSatus:status withCertData:certifcateData hostname:hostname]];
     });
     
     

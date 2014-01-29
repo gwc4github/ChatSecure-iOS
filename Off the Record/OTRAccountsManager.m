@@ -26,6 +26,9 @@
 #import "OTRConstants.h"
 #import "OTRManagedOscarAccount.h"
 #import "OTRManagedXMPPAccount.h"
+#import "OTRManagedXMPPTorAccount.h"
+
+#import "OTRLog.h"
 
 #import "OTRLog.h"
 
@@ -80,7 +83,15 @@
     
     NSArray * accounts = [OTRManagedAccount MR_findAllWithPredicate:autoLoginPredicate];
     
-    return accounts;
+    //remove all tor accounts from auto login
+    NSPredicate *predicate = [NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+        if ([evaluatedObject isKindOfClass:[OTRManagedXMPPTorAccount class]]) {
+            return NO;
+        }
+        return YES;
+    }];
+    
+    return [accounts filteredArrayUsingPredicate:predicate];
 }
 
 

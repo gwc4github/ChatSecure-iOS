@@ -38,10 +38,14 @@
 #import "OTRManagedBuddy.h"
 #import "OTRXMPPBudyTimers.h"
 #import "OTRCertificatePinning.h"
+#import "OTRXMPPError.h"
+
+extern NSString *const OTRXMPPRegisterSucceededNotificationName;
+extern NSString *const OTRXMPPRegisterFailedNotificationName;
+
 
 @interface OTRXMPPManager : NSObject <XMPPRosterDelegate, NSFetchedResultsControllerDelegate, OTRProtocol, OTRCertificatePinningDelegate>
 {
-	XMPPStream *xmppStream;
 	XMPPReconnect *xmppReconnect;
     XMPPRoster *xmppRoster;
     XMPPvCardCoreDataStorage *xmppvCardStorage;
@@ -55,7 +59,7 @@
 	NSString *password;
     XMPPJID *JID;
 	
-	BOOL isXmppConnected;
+    BOOL isRegisteringNewAccount;
     
     dispatch_queue_t backgroundQueue;
 	
@@ -71,17 +75,16 @@
 @property (nonatomic, readonly) XMPPCapabilities *xmppCapabilities;
 @property (nonatomic, readonly) XMPPCapabilitiesCoreDataStorage *xmppCapabilitiesStorage;
 @property (nonatomic, readonly) OTRCertificatePinning * certificatePinningModule;
-@property 	BOOL isXmppConnected;
+@property BOOL didSecure;
 @property (nonatomic, strong) NSMutableDictionary * buddyTimers;
-
-//- (NSManagedObjectContext *)managedObjectContext_capabilities;
 
 - (BOOL)connectWithJID:(NSString*) myJID password:(NSString*)myPassword;
 - (void)disconnect;
 
-//- (NSFetchedResultsController *)fetchedResultsController;
-
-- (NSString*)accountName;
+- (NSString *)accountName;
+- (NSString *)accountDomainWithError:(NSError**)error;
+- (void)registerNewAccountWithPassword:(NSString *)password;
+- (void)failedToConnect:(NSError *)error;
 
 
 //Chat State
