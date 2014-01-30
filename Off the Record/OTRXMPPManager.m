@@ -52,6 +52,9 @@
 #import "OTRConstants.h"
 #import "OTRUtilities.h"
 
+#import "XMPPRoom.h"
+#import "OTRXMPPRoomStorage.h"
+
 static NSTimeInterval const kOTRChatStatePausedTimeout   = 5;
 static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
 
@@ -60,6 +63,9 @@ NSString *const OTRXMPPRegisterFailedNotificationName    = @"OTRXMPPRegisterFail
 
 
 @interface OTRXMPPManager()
+
+@property (nonatomic,strong) XMPPMUC * xmppGroupChatModule;
+@property (nonatomic,strong) OTRXMPPRoomStorage * xmppRoomStorage;
 
 - (void)setupStream;
 - (void)teardownStream;
@@ -95,9 +101,7 @@ NSString *const OTRXMPPRegisterFailedNotificationName    = @"OTRXMPPRegisterFail
         self.isConnected = NO;
         self.account = (OTRManagedXMPPAccount*)newAccount;
 
-        // Configure logging framework
         backgroundQueue = dispatch_queue_create("buddy.background", NULL);
-        //[DDLog addLogger:[DDTTYLogger sharedInstance]];
         
         // Setup the XMPP stream
         [self setupStream];
@@ -211,13 +215,20 @@ NSString *const OTRXMPPRegisterFailedNotificationName    = @"OTRXMPPRegisterFail
     xmppCapabilities.autoFetchNonHashedCapabilities = NO;
     
     
+    // Multi Uuser Chat
+    self.xmppGroupChatModule = [[XMPPMUC alloc] init];
+    [self.xmppGroupChatModule addDelegate:self delegateQueue:backgroundQueue];
+    
+    
 	// Activate xmpp modules
     
-	[xmppReconnect         activate:self.xmppStream];
-	[xmppRoster            activate:self.xmppStream];
-	[xmppvCardTempModule   activate:self.xmppStream];
-	[xmppvCardAvatarModule activate:self.xmppStream];
-	[xmppCapabilities      activate:self.xmppStream];
+	[xmppReconnect                   activate:self.xmppStream];
+	[xmppRoster                      activate:self.xmppStream];
+	[xmppvCardTempModule             activate:self.xmppStream];
+	[xmppvCardAvatarModule           activate:self.xmppStream];
+	[xmppCapabilities                activate:self.xmppStream];
+    [self.xmppGroupChatModule        activate:self.xmppStream];
+    
     
 	// Add ourself as a delegate to anything we may be interested in
     
@@ -245,11 +256,12 @@ NSString *const OTRXMPPRegisterFailedNotificationName    = @"OTRXMPPRegisterFail
 	[self.xmppStream removeDelegate:self];
 	[xmppRoster removeDelegate:self];
 	
-	[xmppReconnect         deactivate];
-	[xmppRoster            deactivate];
-	[xmppvCardTempModule   deactivate];
-	[xmppvCardAvatarModule deactivate];
-	[xmppCapabilities      deactivate];
+	[xmppReconnect                  deactivate];
+	[xmppRoster                     deactivate];
+	[xmppvCardTempModule            deactivate];
+	[xmppvCardAvatarModule          deactivate];
+	[xmppCapabilities               deactivate];
+    [self.xmppGroupChatModule       deactivate];
 	
 	[self.xmppStream disconnect];
 	
@@ -262,6 +274,7 @@ NSString *const OTRXMPPRegisterFailedNotificationName    = @"OTRXMPPRegisterFail
 	xmppvCardAvatarModule = nil;
 	xmppCapabilities = nil;
 	xmppCapabilitiesStorage = nil;
+    self.xmppGroupChatModule = nil;
 }
 
 // It's easy to create XML elments to send and to read received XML elements.
@@ -277,6 +290,14 @@ NSString *const OTRXMPPRegisterFailedNotificationName    = @"OTRXMPPRegisterFail
 
 - (Class) xmppStreamClass {
     return [XMPPStream class];
+}
+
+- (OTRXMPPRoomStorage *)xmppRoomStorage
+{
+    if (!_xmppRoomStorage) {
+        _xmppRoomStorage = [[OTRXMPPRoomStorage alloc] init];
+    }
+    return _xmppRoomStorage;
 }
 
 - (XMPPStream *)xmppStream
@@ -566,8 +587,7 @@ NSString *const OTRXMPPRegisterFailedNotificationName    = @"OTRXMPPRegisterFail
 - (void)xmppStream:(XMPPStream *)sender didReceiveMessage:(XMPPMessage *)message
 {
 	DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
-    
-	// A simple example of inbound message handling.
+
     if([message hasChatState] && ![message isErrorMessage])
     {
         OTRManagedBuddy * messageBuddy = [self buddyWithMessage:message];
@@ -587,7 +607,7 @@ NSString *const OTRXMPPRegisterFailedNotificationName    = @"OTRXMPPRegisterFail
         [OTRManagedChatMessage receivedDeliveryReceiptForMessageID:[message receiptResponseID]];
     }
     
-	if ([message isMessageWithBody] && ![message isErrorMessage])
+	if ([message isChatMessageWithBody] && ![message isErrorMessage])
 	{
         NSString *body = [[message elementForName:@"body"] stringValue];
         
@@ -627,6 +647,27 @@ NSString *const OTRXMPPRegisterFailedNotificationName    = @"OTRXMPPRegisterFail
          postNotificationName:kOTRProtocolDiconnect object:self];
     }
     self.isConnected = NO;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark XMPPMUCDelegate
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (void)xmppMUC:(XMPPMUC *)sender roomJID:(XMPPJID *) roomJID didReceiveInvitation:(XMPPMessage *)message
+{
+    DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
+    
+    XMPPRoom * room = [[XMPPRoom alloc] initWithRoomStorage:self.xmppRoomStorage jid:[message from]];
+    [room activate:self.xmppStream];
+    
+    [room joinRoomUsingNickname:@"THis cool Name" history:nil];
+    
+    
+}
+- (void)xmppMUC:(XMPPMUC *)sender roomJID:(XMPPJID *) roomJID didReceiveInvitationDecline:(XMPPMessage *)message
+{
+    DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
+    
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

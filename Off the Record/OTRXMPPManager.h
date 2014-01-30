@@ -40,11 +40,13 @@
 #import "OTRCertificatePinning.h"
 #import "OTRXMPPError.h"
 
+#import "XMPPMUC.h"
+
 extern NSString *const OTRXMPPRegisterSucceededNotificationName;
 extern NSString *const OTRXMPPRegisterFailedNotificationName;
 
 
-@interface OTRXMPPManager : NSObject <XMPPRosterDelegate, NSFetchedResultsControllerDelegate, OTRProtocol, OTRCertificatePinningDelegate>
+@interface OTRXMPPManager : NSObject <XMPPRosterDelegate, NSFetchedResultsControllerDelegate, OTRProtocol, OTRCertificatePinningDelegate, XMPPMUCDelegate>
 {
 	XMPPReconnect *xmppReconnect;
     XMPPRoster *xmppRoster;
