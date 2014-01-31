@@ -115,9 +115,12 @@
     OTRManagedXMPPRoom * managedRoom = [OTRXMPPRoomStorage fetchOrCreateWithXMPPRoom:room];
     OTRManagedXMPPRoomBuddy * roomBuddy = [OTRXMPPRoomStorage fetchOrCreateWithJIDString:presence.fromStr inRoom:managedRoom];
     
-    roomBuddy.affiliation = @"";
-    roomBuddy.role = @"";
-    roomBuddy.nickname = @"";
+    NSXMLElement *item = [[presence elementForName:@"x" xmlns:XMPPMUCAdminNamespace] elementForName:@"item"];
+    
+    
+    roomBuddy.affiliation = [item attributeStringValueForName:@"affiliation"];;
+    roomBuddy.role = [item attributeStringValueForName:@"role"];;
+    roomBuddy.nickname = presence.from.resource;
     
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
 }
@@ -151,6 +154,9 @@
 - (void)handleDidLeaveRoom:(XMPPRoom *)room
 {
     DDLogInfo(@"%@ - @%@",THIS_METHOD,THIS_METHOD);
+    OTRManagedXMPPRoom * managedRoom = [OTRXMPPRoomStorage fetchOrCreateWithXMPPRoom:room];
+    managedRoom.isJoinedValue = NO;
+    [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveOnlySelfAndWait];
 }
 
 /**
@@ -159,6 +165,11 @@
 - (void)handleDidJoinRoom:(XMPPRoom *)room withNickname:(NSString *)nickname
 {
     DDLogInfo(@"%@ - @%@",THIS_METHOD,THIS_METHOD);
+    OTRManagedXMPPRoom * managedRoom = [OTRXMPPRoomStorage fetchOrCreateWithXMPPRoom:room];
+    managedRoom.isJoinedValue = YES;
+    managedRoom.myNickname = nickname;
+    [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveOnlySelfAndWait];
+    
 }
 
 @end

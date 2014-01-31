@@ -54,6 +54,7 @@
 
 #import "XMPPRoom.h"
 #import "OTRXMPPRoomStorage.h"
+#import "OTRManagedXMPPRoomInvite.h"
 
 static NSTimeInterval const kOTRChatStatePausedTimeout   = 5;
 static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
@@ -66,6 +67,7 @@ NSString *const OTRXMPPRegisterFailedNotificationName    = @"OTRXMPPRegisterFail
 
 @property (nonatomic,strong) XMPPMUC * xmppGroupChatModule;
 @property (nonatomic,strong) OTRXMPPRoomStorage * xmppRoomStorage;
+@property (nonatomic,strong) NSMutableDictionary * xmppRoomDictionary;
 
 - (void)setupStream;
 - (void)teardownStream;
@@ -510,6 +512,26 @@ NSString *const OTRXMPPRegisterFailedNotificationName    = @"OTRXMPPRegisterFail
 #pragma mark XMPPStream Delegate
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+- (void)xmppStream:(XMPPStream *)sender didRegisterModule:(id)module
+{
+	if ([module isKindOfClass:[XMPPRoom class]])
+	{
+		XMPPJID *roomJID = [(XMPPRoom *)module roomJID];
+		
+		[self.xmppRoomDictionary setObject:module forKey:[roomJID full]];
+	}
+}
+
+- (void)xmppStream:(XMPPStream *)sender willUnregisterModule:(id)module
+{
+    if ([module isKindOfClass:[XMPPRoom class]])
+	{
+		XMPPJID *roomJID = [(XMPPRoom *)module roomJID];
+		
+		[self.xmppRoomDictionary removeObjectForKey:[roomJID full]];
+	}
+}
+
 - (void)xmppStreamDidChangeMyJID:(XMPPStream *)stream
 {
     if (![[stream.myJID bare] isEqualToString:self.account.username])
@@ -657,10 +679,23 @@ NSString *const OTRXMPPRegisterFailedNotificationName    = @"OTRXMPPRegisterFail
 {
     DDLogVerbose(@"%@: %@", THIS_FILE, THIS_METHOD);
     
+    OTRManagedXMPPRoomInvite * invite = [OTRManagedXMPPRoomInvite fetchRoomInviteWithJIDString:[[message from] full]];
+    
+    if (!invite) {
+        invite = [OTRManagedXMPPRoomInvite MR_createEntity];
+        invite.roomJID = [[message from] full];
+        invite.message = [message body];
+        invite.date = [NSDate date];
+        invite.toAccount = [self.account MR_inContext:[NSManagedObjectContext MR_contextForCurrentThread]];
+        [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
+    }
+    
+    /*
     XMPPRoom * room = [[XMPPRoom alloc] initWithRoomStorage:self.xmppRoomStorage jid:[message from]];
     [room activate:self.xmppStream];
     
     [room joinRoomUsingNickname:@"THis cool Name" history:nil];
+     */
     
     
 }

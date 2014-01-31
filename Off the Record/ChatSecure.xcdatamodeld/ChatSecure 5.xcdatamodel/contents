@@ -65,6 +65,7 @@
     </entity>
     <entity name="OTRManagedXMPPRoom" representedClassName="OTRManagedXMPPRoom" syncable="YES">
         <attribute name="isJoined" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="lastMessageDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="myNickname" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="myRoomJID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="roomJID" optional="YES" attributeType="String" syncable="YES"/>
@@ -77,17 +78,19 @@
         <attribute name="jid" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="nickname" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="role" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="currentStatus" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="OTRManagedXMPPRoomStatusMessage" inverseName="roomBuddy" inverseEntity="OTRManagedXMPPRoomStatusMessage" syncable="YES"/>
         <relationship name="room" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="OTRManagedXMPPRoom" inverseName="roomBuddies" inverseEntity="OTRManagedXMPPRoom" syncable="YES"/>
         <relationship name="roomMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="OTRManagedXMPPRoomMessage" inverseName="fromBuddy" inverseEntity="OTRManagedXMPPRoomMessage" syncable="YES"/>
+    </entity>
+    <entity name="OTRManagedXMPPRoomInvite" representedClassName="OTRManagedXMPPRoomInvite" syncable="YES">
+        <attribute name="date" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="message" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="roomJID" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="toAccount" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="OTRManagedAccount" syncable="YES"/>
     </entity>
     <entity name="OTRManagedXMPPRoomMessage" representedClassName="OTRManagedXMPPRoomMessage" parentEntity="OTRManagedChatMessage" syncable="YES">
         <attribute name="remoteTimestamp" optional="YES" attributeType="Date" syncable="YES"/>
         <relationship name="fromBuddy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="OTRManagedXMPPRoomBuddy" inverseName="roomMessages" inverseEntity="OTRManagedXMPPRoomBuddy" syncable="YES"/>
         <relationship name="room" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="OTRManagedXMPPRoom" inverseName="roomMessages" inverseEntity="OTRManagedXMPPRoom" syncable="YES"/>
-    </entity>
-    <entity name="OTRManagedXMPPRoomStatusMessage" representedClassName="OTRManagedXMPPRoomStatusMessage" parentEntity="OTRManagedStatusMessage" syncable="YES">
-        <relationship name="roomBuddy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="OTRManagedXMPPRoomBuddy" inverseName="currentStatus" inverseEntity="OTRManagedXMPPRoomBuddy" syncable="YES"/>
     </entity>
     <entity name="OTRManagedXMPPTorAccount" representedClassName="OTRManagedXMPPTorAccount" parentEntity="OTRManagedXMPPAccount" syncable="YES"/>
     <entity name="OTRvCard" representedClassName="OTRvCard" syncable="YES">
@@ -122,19 +125,19 @@
         <element name="OTRManagedGroup" positionX="486" positionY="306" width="128" height="75"/>
         <element name="OTRManagedMessage" positionX="-290" positionY="9" width="128" height="118"/>
         <element name="OTRManagedOAuthAccount" positionX="637" positionY="288" width="128" height="45"/>
-        <element name="OTRManagedOscarAccount" positionX="484" positionY="63" width="128" height="45"/>
+        <element name="OTRManagedOscarAccount" positionX="484" positionY="63" width="128" height="43"/>
         <element name="OTRManagedStatusMessage" positionX="-389" positionY="203" width="128" height="58"/>
         <element name="OTRManagedXMPPAccount" positionX="486" positionY="117" width="128" height="88"/>
         <element name="OTRManagedXMPPBuddy" positionX="-117" positionY="317" width="162" height="58"/>
         <element name="OTRManagedXMPPResource" positionX="90" positionY="323" width="171" height="73"/>
-        <element name="OTRManagedXMPPRoom" positionX="-414" positionY="362" width="153" height="148"/>
-        <element name="OTRManagedXMPPRoomBuddy" positionX="-216" positionY="414" width="180" height="148"/>
-        <element name="OTRManagedXMPPTorAccount" positionX="486" positionY="227" width="128" height="45"/>
+        <element name="OTRManagedXMPPRoom" positionX="-414" positionY="362" width="153" height="163"/>
+        <element name="OTRManagedXMPPRoomBuddy" positionX="-216" positionY="414" width="180" height="133"/>
+        <element name="OTRManagedXMPPRoomInvite" positionX="-198" positionY="569" width="171" height="103"/>
+        <element name="OTRManagedXMPPRoomMessage" positionX="-441" positionY="542" width="198" height="88"/>
+        <element name="OTRManagedXMPPTorAccount" positionX="486" positionY="227" width="128" height="43"/>
         <element name="OTRvCard" positionX="223" positionY="342" width="128" height="135"/>
         <element name="OTRvCardAvatar" positionX="241" positionY="474" width="128" height="75"/>
         <element name="OTRvCardTemp" positionX="16" positionY="510" width="128" height="75"/>
-        <element name="OTRXMPPManagedPresenceSubscriptionRequest" positionX="637" positionY="36" width="128" height="105"/>
-        <element name="OTRManagedXMPPRoomMessage" positionX="-441" positionY="542" width="198" height="88"/>
-        <element name="OTRManagedXMPPRoomStatusMessage" positionX="-198" positionY="608" width="189" height="58"/>
+        <element name="OTRXMPPManagedPresenceSubscriptionRequest" positionX="637" positionY="36" width="272" height="105"/>
     </elements>
 </model>

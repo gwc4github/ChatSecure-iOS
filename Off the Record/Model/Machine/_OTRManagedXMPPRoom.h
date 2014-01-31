@@ -6,6 +6,7 @@
 
 extern const struct OTRManagedXMPPRoomAttributes {
 	__unsafe_unretained NSString *isJoined;
+	__unsafe_unretained NSString *lastMessageDate;
 	__unsafe_unretained NSString *myNickname;
 	__unsafe_unretained NSString *myRoomJID;
 	__unsafe_unretained NSString *roomJID;
@@ -22,6 +23,7 @@ extern const struct OTRManagedXMPPRoomFetchedProperties {
 
 @class OTRManagedXMPPRoomBuddy;
 @class OTRManagedXMPPRoomMessage;
+
 
 
 
@@ -51,6 +53,16 @@ extern const struct OTRManagedXMPPRoomFetchedProperties {
 - (void)setIsJoinedValue:(BOOL)value_;
 
 //- (BOOL)validateIsJoined:(id*)value_ error:(NSError**)error_;
+
+
+
+
+
+@property (nonatomic, strong) NSDate* lastMessageDate;
+
+
+
+//- (BOOL)validateLastMessageDate:(id*)value_ error:(NSError**)error_;
 
 
 
@@ -135,6 +147,12 @@ extern const struct OTRManagedXMPPRoomFetchedProperties {
 
 - (BOOL)primitiveIsJoinedValue;
 - (void)setPrimitiveIsJoinedValue:(BOOL)value_;
+
+
+
+
+- (NSDate*)primitiveLastMessageDate;
+- (void)setPrimitiveLastMessageDate:(NSDate*)value;
 
 
 

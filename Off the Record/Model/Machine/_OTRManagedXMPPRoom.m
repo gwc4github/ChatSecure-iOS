@@ -5,6 +5,7 @@
 
 const struct OTRManagedXMPPRoomAttributes OTRManagedXMPPRoomAttributes = {
 	.isJoined = @"isJoined",
+	.lastMessageDate = @"lastMessageDate",
 	.myNickname = @"myNickname",
 	.myRoomJID = @"myRoomJID",
 	.roomJID = @"roomJID",
@@ -78,6 +79,13 @@ const struct OTRManagedXMPPRoomFetchedProperties OTRManagedXMPPRoomFetchedProper
 - (void)setPrimitiveIsJoinedValue:(BOOL)value_ {
 	[self setPrimitiveIsJoined:[NSNumber numberWithBool:value_]];
 }
+
+
+
+
+
+@dynamic lastMessageDate;
+
 
 
 

@@ -11,7 +11,6 @@ const struct OTRManagedXMPPRoomBuddyAttributes OTRManagedXMPPRoomBuddyAttributes
 };
 
 const struct OTRManagedXMPPRoomBuddyRelationships OTRManagedXMPPRoomBuddyRelationships = {
-	.currentStatus = @"currentStatus",
 	.room = @"room",
 	.roomMessages = @"roomMessages",
 };
@@ -79,10 +78,6 @@ const struct OTRManagedXMPPRoomBuddyFetchedProperties OTRManagedXMPPRoomBuddyFet
 
 
 
-
-@dynamic currentStatus;
-
-	
 
 @dynamic room;
 

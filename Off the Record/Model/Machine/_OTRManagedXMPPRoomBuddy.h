@@ -12,7 +12,6 @@ extern const struct OTRManagedXMPPRoomBuddyAttributes {
 } OTRManagedXMPPRoomBuddyAttributes;
 
 extern const struct OTRManagedXMPPRoomBuddyRelationships {
-	__unsafe_unretained NSString *currentStatus;
 	__unsafe_unretained NSString *room;
 	__unsafe_unretained NSString *roomMessages;
 } OTRManagedXMPPRoomBuddyRelationships;
@@ -20,7 +19,6 @@ extern const struct OTRManagedXMPPRoomBuddyRelationships {
 extern const struct OTRManagedXMPPRoomBuddyFetchedProperties {
 } OTRManagedXMPPRoomBuddyFetchedProperties;
 
-@class OTRManagedXMPPRoomStatusMessage;
 @class OTRManagedXMPPRoom;
 @class OTRManagedXMPPRoomMessage;
 
@@ -82,13 +80,6 @@ extern const struct OTRManagedXMPPRoomBuddyFetchedProperties {
 
 
 
-@property (nonatomic, strong) OTRManagedXMPPRoomStatusMessage *currentStatus;
-
-//- (BOOL)validateCurrentStatus:(id*)value_ error:(NSError**)error_;
-
-
-
-
 @property (nonatomic, strong) OTRManagedXMPPRoom *room;
 
 //- (BOOL)validateRoom:(id*)value_ error:(NSError**)error_;
@@ -140,11 +131,6 @@ extern const struct OTRManagedXMPPRoomBuddyFetchedProperties {
 - (void)setPrimitiveRole:(NSString*)value;
 
 
-
-
-
-- (OTRManagedXMPPRoomStatusMessage*)primitiveCurrentStatus;
-- (void)setPrimitiveCurrentStatus:(OTRManagedXMPPRoomStatusMessage*)value;
 
 
 

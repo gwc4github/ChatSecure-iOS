@@ -42,6 +42,9 @@
 
 #import "XMPPMUC.h"
 
+#import "OTRXMPPRoomStorage.h"
+@class XMPPCapabilitiesCoreDataStorage;
+
 extern NSString *const OTRXMPPRegisterSucceededNotificationName;
 extern NSString *const OTRXMPPRegisterFailedNotificationName;
 
@@ -77,6 +80,7 @@ extern NSString *const OTRXMPPRegisterFailedNotificationName;
 @property (nonatomic, readonly) XMPPCapabilities *xmppCapabilities;
 @property (nonatomic, readonly) XMPPCapabilitiesCoreDataStorage *xmppCapabilitiesStorage;
 @property (nonatomic, readonly) OTRCertificatePinning * certificatePinningModule;
+@property (nonatomic, readonly) OTRXMPPRoomStorage * xmppRoomStorage;
 @property BOOL didSecure;
 @property (nonatomic, strong) NSMutableDictionary * buddyTimers;
 

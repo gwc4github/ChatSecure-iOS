@@ -12,8 +12,15 @@
 #import "Strings.h"
 #import "OTRXMPPManager.h"
 #import "OTRProtocolManager.h"
+#import "OTRManagedXMPPRoomInvite.h"
+
+static NSUInteger const subscriptionAlertViewTag = 222;
+static NSUInteger const groupChatAlertViewTag    = 223;
 
 @interface OTRSubscriptionRequestsViewController ()
+
+@property (nonatomic,strong) OTRXMPPManagedPresenceSubscriptionRequest * currentSelectedRequest;
+@property (nonatomic,strong) OTRManagedXMPPRoomInvite * currentSelectedRoomInvite;
 
 @end
 
@@ -51,12 +58,27 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
+    if ([self groupChatInvites].count && [self subscriptionRequests].count) {
+        return 2;
+    }
     return 1;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    NSArray * sectionArray = [self arrayForSection:section];
+    if ([sectionArray isEqual: [self groupChatInvites]]) {
+        return @"Group Chat Invites";
+    }
+    else if([sectionArray isEqual:[self subscriptionRequests]]) {
+        return SUBSCRIPTION_REQUEST_TITLE;
+    }
+    return @"";
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [[self subscriptionRequests] count];
+    return [[self arrayForSection:section] count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -67,10 +89,23 @@
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     }
-    OTRXMPPManagedPresenceSubscriptionRequest * subRequest = [[self subscriptionRequests] objectAtIndex:indexPath.row];
+    NSString * textLabelString = nil;
+    NSString * detailTextLabelString = nil;
+    NSArray * sectionArray = [self arrayForSection:indexPath.row];
+    if ([sectionArray isEqual: [self groupChatInvites]]) {
+        OTRManagedXMPPRoomInvite * invite = [[self groupChatInvites] objectAtIndex:indexPath.row];
+        textLabelString = invite.roomJID;
+        detailTextLabelString = invite.message;
+    }
+    else if([sectionArray isEqual:[self subscriptionRequests]]) {
+        OTRXMPPManagedPresenceSubscriptionRequest * subRequest = [[self subscriptionRequests] objectAtIndex:indexPath.row];
+        textLabelString = subRequest.jid;
+        detailTextLabelString = subRequest.xmppAccount.username;
+    }
+
     
-    cell.textLabel.text = subRequest.jid;
-    cell.detailTextLabel.text = subRequest.xmppAccount.username;
+    cell.textLabel.text = textLabelString;
+    cell.detailTextLabel.text = detailTextLabelString;
     
     return cell;
 }
@@ -88,9 +123,28 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    currentlySelectedRequest = [[self subscriptionRequests] objectAtIndex:indexPath.row];
-    UIActionSheet * requestActionSheet = [[UIActionSheet alloc] initWithTitle:currentlySelectedRequest.jid delegate:self cancelButtonTitle:CANCEL_STRING destructiveButtonTitle:REJECT_STRING otherButtonTitles:ADD_STRING, nil];
-    [requestActionSheet showInView:self.view];
+    NSArray * sectionArray = [self arrayForSection:indexPath.row];
+    if ([sectionArray isEqual: [self groupChatInvites]]) {
+        self.currentSelectedRoomInvite = [sectionArray objectAtIndex:indexPath.row];
+        UIActionSheet * actionSheet = [[UIActionSheet alloc] initWithTitle:self.currentSelectedRoomInvite.roomJID
+                                                                  delegate:self
+                                                         cancelButtonTitle:CANCEL_STRING
+                                                    destructiveButtonTitle:REJECT_STRING
+                                                         otherButtonTitles:@"Join", nil];
+        actionSheet.tag = groupChatAlertViewTag;
+        [actionSheet showInView:self.view];
+    }
+    else if([sectionArray isEqual:[self subscriptionRequests]]) {
+        self.currentSelectedRequest = [sectionArray objectAtIndex:indexPath.row];
+        UIActionSheet * requestActionSheet = [[UIActionSheet alloc] initWithTitle:self.currentSelectedRequest.jid
+                                                                         delegate:self
+                                                                cancelButtonTitle:CANCEL_STRING
+                                                           destructiveButtonTitle:REJECT_STRING
+                                                                otherButtonTitles:ADD_STRING, nil];
+        requestActionSheet.tag = subscriptionAlertViewTag;
+        [requestActionSheet showInView:self.view];
+    }
+    
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
@@ -111,53 +165,72 @@
     NSPredicate * accountPredicate = [NSPredicate predicateWithFormat:@"self.xmppAccount.isConnected == YES"];
     return [[self.subscriptionRequestsFetchedResultsController fetchedObjects] filteredArrayUsingPredicate:accountPredicate];
 }
-/*
--(void)controllerWillChangeContent:(NSFetchedResultsController *)controller
-{
-    [self.tableView beginUpdates];
+
+- (NSArray *)groupChatInvites {
+    NSArray * invites = [OTRManagedXMPPRoomInvite MR_findAllSortedBy:OTRManagedXMPPRoomInviteAttributes.date ascending:YES];
+    return invites;
 }
 
--(void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath
-{
-    switch (type) {
-        case NSFetchedResultsChangeInsert:
-            [self.tableView insertRowsAtIndexPaths:@[newIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-            break;
-        case NSFetchedResultsChangeUpdate:
-            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-            break;
-        case NSFetchedResultsChangeMove:
-            [self.tableView moveRowAtIndexPath:indexPath toIndexPath:newIndexPath];
-            break;
-        case NSFetchedResultsChangeDelete:
-             [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-            break;
-        default:
-            break;
-    }
-}
-*/
 -(void)controllerDidChangeContent:(NSFetchedResultsController *)controller
 {
     [self.tableView reloadData];
+}
+
+
+-(NSArray *)arrayForSection:(NSUInteger)section
+{
+    if ([self groupChatInvites].count && [self subscriptionRequests].count) {
+        if (section == 0) {
+            return [self subscriptionRequests];
+        }
+        else {
+            return [self groupChatInvites];
+        }
+    }
+    else if([self groupChatInvites].count) {
+        return [self groupChatInvites];
+    }
+    else if ([self subscriptionRequests].count) {
+        return [self subscriptionRequests];
+    }
+    return nil;
 }
 
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if(actionSheet.cancelButtonIndex != buttonIndex )
     {
-        OTRXMPPManager * manager = (OTRXMPPManager *)[[OTRProtocolManager sharedInstance] protocolForAccount:currentlySelectedRequest.xmppAccount];
-        XMPPJID *jid = [XMPPJID jidWithString:currentlySelectedRequest.jid];
-        
-        if (actionSheet.destructiveButtonIndex == buttonIndex) {
-            [manager.xmppRoster rejectPresenceSubscriptionRequestFrom:jid];
+        if (actionSheet.tag == groupChatAlertViewTag) {
+            if (actionSheet.destructiveButtonIndex != buttonIndex) {
+                //Join Room
+                OTRXMPPManager * manager = (OTRXMPPManager *)[[OTRProtocolManager sharedInstance] protocolForAccount:self.currentSelectedRoomInvite.toAccount];
+                XMPPRoom * room = [[XMPPRoom alloc] initWithRoomStorage:manager.xmppRoomStorage jid:[XMPPJID jidWithString:self.currentSelectedRoomInvite.roomJID]];
+                [room activate:manager.xmppStream];
+                
+                [room joinRoomUsingNickname:@"THis cool Name" history:nil];
+            }
+            [self.currentSelectedRoomInvite MR_deleteEntity];
+            [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
+            [self.tableView reloadData];
         }
-        else
+        else if (actionSheet.tag == subscriptionAlertViewTag)
         {
-            [manager.xmppRoster acceptPresenceSubscriptionRequestFrom:jid andAddToRoster:YES];
+            OTRXMPPManager * manager = (OTRXMPPManager *)[[OTRProtocolManager sharedInstance] protocolForAccount:self.currentSelectedRequest.xmppAccount];
+            XMPPJID *jid = [XMPPJID jidWithString:self.currentSelectedRequest.jid];
+            
+            if (actionSheet.destructiveButtonIndex == buttonIndex) {
+                [manager.xmppRoster rejectPresenceSubscriptionRequestFrom:jid];
+            }
+            else
+            {
+                [manager.xmppRoster acceptPresenceSubscriptionRequestFrom:jid andAddToRoster:YES];
+            }
+            [self.currentSelectedRequest MR_deleteEntity];
+            [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
+            
         }
-        [currentlySelectedRequest MR_deleteEntity];
-        [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
+        
+        
     }
     
     
