@@ -950,9 +950,14 @@ managedBuddyObjectID
     });
 }
 
-- (void)sendGroupMessage:(NSString *)message toRoomJID:(NSString *)roomJID
+- (void)sendRoomMessageWithBody:(NSString *)bodyString toRoomJID:(NSString *)roomJID
 {
-    XMPPRoom * room = [self.xmppRoomDictionary objectForKey:roomJID];
-    [room sendMessageWithBody:message];
+    XMPPRoom * room = [self.xmppRoomDictionary objectForKey:roomJID];;
+    NSXMLElement *body = [NSXMLElement elementWithName:@"body" stringValue:bodyString];
+	
+	XMPPMessage *xmppMessage = [XMPPMessage message];
+    [xmppMessage addAttributeWithName:@"id" stringValue:[OTRUtilities uniqueString]];
+	[xmppMessage addChild:body];
+    [room sendMessage:xmppMessage];
 }
 @end

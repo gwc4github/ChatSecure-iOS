@@ -27,6 +27,16 @@
 
 - (BOOL)isDuplicateMessage:(XMPPMessage *)message inRoom:(OTRManagedXMPPRoom *)managedRoom
 {
+    NSDate *remoteTimestamp = [message delayedDeliveryDate];
+    
+    //check unique ID
+    NSString * uniqueId = [message elementID];
+    if ([uniqueId length]) {
+        if ([OTRManagedXMPPRoomMessage MR_findFirstByAttribute:OTRManagedChatMessageAttributes.uniqueID withValue:uniqueId]) {
+            return YES;
+        }
+        return NO;
+    }
     
     return NO;
 }
@@ -36,11 +46,13 @@
     OTRManagedXMPPRoomBuddy * roomBuddy = [OTRXMPPRoomStorage fetchOrCreateWithJIDString:message.fromStr inRoom:managedRoom];
     
     OTRManagedXMPPRoomMessage * managedMessage = [OTRManagedXMPPRoomMessage MR_createEntity];
+    managedMessage.date = [NSDate date];
+    managedMessage.uniqueID = message.elementID;
     managedMessage.room = managedRoom;
     managedMessage.fromBuddy = roomBuddy;
     managedMessage.message = [message body];
     managedMessage.isIncomingValue = !outgoing;
-    managedMessage.date = [NSDate date];
+    
     
     if ([message delayedDeliveryDate]) {
         managedMessage.remoteTimestamp = [message delayedDeliveryDate];

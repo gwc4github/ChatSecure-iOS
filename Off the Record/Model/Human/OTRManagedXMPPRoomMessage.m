@@ -1,4 +1,5 @@
 #import "OTRManagedXMPPRoomMessage.h"
+#import "OTRUtilities.h"
 
 
 @interface OTRManagedXMPPRoomMessage ()
@@ -10,6 +11,13 @@
 
 @implementation OTRManagedXMPPRoomMessage
 
-// Custom logic goes here.
++ (OTRManagedXMPPRoomMessage *)newMessage
+{
+    OTRManagedXMPPRoomMessage * managedMessage = [OTRManagedXMPPRoomMessage MR_createEntity];
+    managedMessage.date = [NSDate date];
+    managedMessage.uniqueID = [OTRUtilities uniqueString];
+    
+    return managedMessage;
+}
 
 @end

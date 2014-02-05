@@ -12,6 +12,7 @@
 #import "OTRManagedXMPPRoomBuddy.h"
 #import "OTRXMPPManager.h"
 #import "OTRProtocolManager.h"
+#import "OTRTitleSubtitleView.h"
 
 @interface OTRGroupChatViewController ()
 
@@ -25,6 +26,13 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.titleView.titleLabel.text = self.managedRoom.roomJID;
+    self.titleView.subtitleLabel.text = self.managedRoom.myNickname;
 }
 
 - (void)setManagedRoom:(OTRManagedXMPPRoom *)managedRoom
@@ -70,6 +78,7 @@
 - (void) sendButtonPressedForInputBar:(OTRChatInputBar *)inputBar
 {
     OTRXMPPManager * xmppManager = (OTRXMPPManager *)[[OTRProtocolManager sharedInstance] protocolForAccount:self.managedRoom.account];
-    [xmppManager sendGroupMessage:inputBar.textView.text toRoomJID:self.managedRoom.roomJID];
+    [xmppManager sendRoomMessageWithBody:inputBar.textView.text toRoomJID:self.managedRoom.roomJID];
+    inputBar.textView.text = @"";
 }
 @end

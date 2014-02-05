@@ -10,10 +10,13 @@
 
 #import "OTRChatInputBar.h"
 
+@class OTRTitleSubtitleView;
+
 @interface OTRBaseChatViewController : UIViewController <UITableViewDataSource,UITableViewDelegate,NSFetchedResultsControllerDelegate,OTRChatInputBarDelegate,UISplitViewControllerDelegate>
 
 @property (nonatomic,strong) UITableView * tableView;
 @property (nonatomic,strong) NSFetchedResultsController * messagesFetchedResultsController;
+@property (nonatomic,strong) OTRTitleSubtitleView * titleView;
 
 
 @end

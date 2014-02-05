@@ -103,7 +103,7 @@ extern NSString *const OTRXMPPRegisterFailedNotificationName;
 -(NSTimer *)inactiveChatStateTimerForBuddyObjectID:(NSManagedObjectID *)managedBuddyObjectID;
 -(NSTimer *)pausedChatStateTimerForBuddyObjectID:(NSManagedObjectID *)managedBuddyObjectID;
 
-- (void)sendGroupMessage:(NSString *)message toRoomJID:(NSString *)roomJID;
+- (void)sendRoomMessageWithBody:(NSString *)bodyString toRoomJID:(NSString *)roomJID;
 
 @property (nonatomic, retain) OTRManagedXMPPAccount *account;
 

@@ -25,7 +25,7 @@ static NSTimeInterval const messageSentDateShowTimeInterval = 5*60; // 5 minutes
 
 @interface OTRBaseChatViewController ()
 
-@property (nonatomic,strong) OTRTitleSubtitleView * titleView;
+
 @property (nonatomic,strong) OTRChatInputBar * chatInputBar;
 @property (nonatomic,strong) NSMutableArray * showDateForRowArray;
 @property (nonatomic,strong) UISwipeGestureRecognizer * swipeGestureRecognizer;
