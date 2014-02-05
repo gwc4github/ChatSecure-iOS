@@ -44,6 +44,7 @@
 
 #import "OTRXMPPRoomStorage.h"
 @class XMPPCapabilitiesCoreDataStorage;
+@class OTRManagedXMPPRoomMessage;
 
 extern NSString *const OTRXMPPRegisterSucceededNotificationName;
 extern NSString *const OTRXMPPRegisterFailedNotificationName;
@@ -101,6 +102,8 @@ extern NSString *const OTRXMPPRegisterFailedNotificationName;
 -(void)sendInactiveChatState:(NSTimer *)timer;
 -(NSTimer *)inactiveChatStateTimerForBuddyObjectID:(NSManagedObjectID *)managedBuddyObjectID;
 -(NSTimer *)pausedChatStateTimerForBuddyObjectID:(NSManagedObjectID *)managedBuddyObjectID;
+
+- (void)sendGroupMessage:(NSString *)message toRoomJID:(NSString *)roomJID;
 
 @property (nonatomic, retain) OTRManagedXMPPAccount *account;
 

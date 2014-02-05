@@ -10,6 +10,7 @@
 #import "OTRManagedBuddy.h"
 #import "OTRManagedMessage.h"
 #import "OTRManagedGroup.h"
+#import "OTRManagedXMPPRoom.h"
 #import <Security/SecureTransport.h>
 
 #import "OTRLog.h"
@@ -78,6 +79,8 @@
     [OTRManagedMessage MR_deleteAllMatchingPredicate:nil];
     //Delete all Groups
     [OTRManagedGroup MR_deleteAllMatchingPredicate:nil];
+    
+    [OTRManagedXMPPRoom MR_deleteAllMatchingPredicate:nil];
     
     
     NSManagedObjectContext *context = [NSManagedObjectContext MR_contextForCurrentThread];

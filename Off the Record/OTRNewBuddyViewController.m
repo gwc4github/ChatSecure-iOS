@@ -13,6 +13,7 @@
 #import "OTRManagedBuddy.h"
 #import <QuartzCore/QuartzCore.h>
 #import "Strings.h"
+#import "OTRXMPPManager.h"
 
 @interface OTRNewBuddyViewController ()
 

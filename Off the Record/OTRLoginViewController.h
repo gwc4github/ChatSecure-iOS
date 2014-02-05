@@ -25,6 +25,8 @@
 #import "MBProgressHUD.h"
 #import "Strings.h"
 #import "OTRConstants.h"
+#import "OTRManagedXMPPAccount.h"
+#import "OTRXMPPManager.h"
 
 extern NSString *const kTextLabelTextKey;
 extern NSString *const kCellTypeKey;

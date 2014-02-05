@@ -11,9 +11,12 @@
 #import "XMPPRoom.h"
 
 @class OTRManagedXMPPRoom;
+@class OTRXMPPManager;
 
 @interface OTRXMPPRoomStorage : NSObject <XMPPRoomStorage>
 
-+ (OTRManagedXMPPRoom *)fetchOrCreateWithXMPPRoom:(XMPPRoom *)xmppRoom;
+@property (nonatomic,weak) OTRXMPPManager * xmppManager;
+
+- (OTRManagedXMPPRoom *)fetchOrCreateWithXMPPRoom:(XMPPRoom *)xmppRoom;
 
 @end

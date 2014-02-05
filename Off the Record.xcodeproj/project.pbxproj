@@ -41,6 +41,8 @@
 		630F739A1899D46600CB28CD /* OTRManagedXMPPRoomStatusMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 630F73991899D46600CB28CD /* OTRManagedXMPPRoomStatusMessage.m */; };
 		630F739D1899D47500CB28CD /* _OTRManagedXMPPRoomStatusMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 630F739C1899D47500CB28CD /* _OTRManagedXMPPRoomStatusMessage.m */; };
 		630F73A01899D5B300CB28CD /* OTRManagedXMPPBuddy.m in Sources */ = {isa = PBXBuildFile; fileRef = 630F739F1899D5B300CB28CD /* OTRManagedXMPPBuddy.m */; };
+		63132D5018A196D1003D4288 /* OTRGroupChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 63132D4F18A196D1003D4288 /* OTRGroupChatViewController.m */; };
+		63132D5D18A1A31F003D4288 /* OTRBaseChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 63132D5C18A1A31F003D4288 /* OTRBaseChatViewController.m */; };
 		63188CBD16E55B230000DD40 /* OTRNewBuddyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 63188CBC16E55B230000DD40 /* OTRNewBuddyViewController.m */; };
 		6319F696165EAB1F0063AC93 /* supportedLanguages.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6319F695165EAB1F0063AC93 /* supportedLanguages.plist */; };
 		631FE8851720951400AEA107 /* OTRStatusMessageCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 631FE8841720951400AEA107 /* OTRStatusMessageCell.m */; };
@@ -767,6 +769,10 @@
 		630F739C1899D47500CB28CD /* _OTRManagedXMPPRoomStatusMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _OTRManagedXMPPRoomStatusMessage.m; path = Model/Machine/_OTRManagedXMPPRoomStatusMessage.m; sourceTree = "<group>"; };
 		630F739E1899D5B300CB28CD /* OTRManagedXMPPBuddy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OTRManagedXMPPBuddy.h; path = Model/Human/OTRManagedXMPPBuddy.h; sourceTree = "<group>"; };
 		630F739F1899D5B300CB28CD /* OTRManagedXMPPBuddy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OTRManagedXMPPBuddy.m; path = Model/Human/OTRManagedXMPPBuddy.m; sourceTree = "<group>"; };
+		63132D4E18A196D1003D4288 /* OTRGroupChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTRGroupChatViewController.h; sourceTree = "<group>"; };
+		63132D4F18A196D1003D4288 /* OTRGroupChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTRGroupChatViewController.m; sourceTree = "<group>"; };
+		63132D5B18A1A31F003D4288 /* OTRBaseChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTRBaseChatViewController.h; sourceTree = "<group>"; };
+		63132D5C18A1A31F003D4288 /* OTRBaseChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTRBaseChatViewController.m; sourceTree = "<group>"; };
 		63188CBB16E55B220000DD40 /* OTRNewBuddyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OTRNewBuddyViewController.h; sourceTree = "<group>"; };
 		63188CBC16E55B230000DD40 /* OTRNewBuddyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OTRNewBuddyViewController.m; sourceTree = "<group>"; };
 		6319F695165EAB1F0063AC93 /* supportedLanguages.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = supportedLanguages.plist; path = "Off the Record/supportedLanguages.plist"; sourceTree = SOURCE_ROOT; };
@@ -3844,8 +3850,12 @@
 				632E5C8516D1A2A90037E37C /* OTRMessageTableViewCell.m */,
 				63534AAD187F5A1400061776 /* OTRChatBubbleView.h */,
 				63534AAE187F5A1400061776 /* OTRChatBubbleView.m */,
+				63132D5B18A1A31F003D4288 /* OTRBaseChatViewController.h */,
+				63132D5C18A1A31F003D4288 /* OTRBaseChatViewController.m */,
 				63022BB416CDAD4C00F764F1 /* OTRChatViewController.h */,
 				63022BB516CDAD4C00F764F1 /* OTRChatViewController.m */,
+				63132D4E18A196D1003D4288 /* OTRGroupChatViewController.h */,
+				63132D4F18A196D1003D4288 /* OTRGroupChatViewController.m */,
 				638940CF1815E339005F651E /* OTRDemoChatViewController.h */,
 				638940D01815E339005F651E /* OTRDemoChatViewController.m */,
 				633B6D0317ECFB0C002DA152 /* OTRChatInputBar.h */,
@@ -4666,6 +4676,7 @@
 				63464F611889ECC200526358 /* OTRManagedAccount.m in Sources */,
 				63E5E81516D1D888006E2B01 /* OTROldAccount.m in Sources */,
 				63E5E81616D1D888006E2B01 /* OTROldOscarAccount.m in Sources */,
+				63132D5D18A1A31F003D4288 /* OTRBaseChatViewController.m in Sources */,
 				63E5E81716D1D888006E2B01 /* OTROldXMPPAccount.m in Sources */,
 				63E5E81E16D1DE66006E2B01 /* ChatSecure.xcdatamodeld in Sources */,
 				63CC9F1C16D2D18100BDA7D1 /* DAKeyboardControl.m in Sources */,
@@ -4753,6 +4764,7 @@
 				637BC43018985BAC006EC18C /* OTRColorFadingDotView.m in Sources */,
 				630F73A01899D5B300CB28CD /* OTRManagedXMPPBuddy.m in Sources */,
 				63483FAF1752CED100779257 /* XMPPRoomMessageMemoryStorageObject.m in Sources */,
+				63132D5018A196D1003D4288 /* OTRGroupChatViewController.m in Sources */,
 				63483FB01752CED100779257 /* XMPPRoomOccupantMemoryStorageObject.m in Sources */,
 				63483FB11752CED100779257 /* XMPPMessage+XEP0045.m in Sources */,
 				63483FB21752CED100779257 /* XMPPMUC.m in Sources */,

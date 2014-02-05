@@ -10,12 +10,16 @@ extern const struct OTRManagedXMPPAccountAttributes {
 } OTRManagedXMPPAccountAttributes;
 
 extern const struct OTRManagedXMPPAccountRelationships {
+	__unsafe_unretained NSString *roomInvites;
+	__unsafe_unretained NSString *rooms;
 	__unsafe_unretained NSString *subscriptionRequests;
 } OTRManagedXMPPAccountRelationships;
 
 extern const struct OTRManagedXMPPAccountFetchedProperties {
 } OTRManagedXMPPAccountFetchedProperties;
 
+@class OTRManagedXMPPRoomInvite;
+@class OTRManagedXMPPRoom;
 @class OTRXMPPManagedPresenceSubscriptionRequest;
 
 
@@ -58,6 +62,20 @@ extern const struct OTRManagedXMPPAccountFetchedProperties {
 
 
 
+@property (nonatomic, strong) OTRManagedXMPPRoomInvite *roomInvites;
+
+//- (BOOL)validateRoomInvites:(id*)value_ error:(NSError**)error_;
+
+
+
+
+@property (nonatomic, strong) NSSet *rooms;
+
+- (NSMutableSet*)roomsSet;
+
+
+
+
 @property (nonatomic, strong) NSSet *subscriptionRequests;
 
 - (NSMutableSet*)subscriptionRequestsSet;
@@ -69,6 +87,11 @@ extern const struct OTRManagedXMPPAccountFetchedProperties {
 @end
 
 @interface _OTRManagedXMPPAccount (CoreDataGeneratedAccessors)
+
+- (void)addRooms:(NSSet*)value_;
+- (void)removeRooms:(NSSet*)value_;
+- (void)addRoomsObject:(OTRManagedXMPPRoom*)value_;
+- (void)removeRoomsObject:(OTRManagedXMPPRoom*)value_;
 
 - (void)addSubscriptionRequests:(NSSet*)value_;
 - (void)removeSubscriptionRequests:(NSSet*)value_;
@@ -93,6 +116,16 @@ extern const struct OTRManagedXMPPAccountFetchedProperties {
 - (void)setPrimitivePortValue:(int16_t)value_;
 
 
+
+
+
+- (OTRManagedXMPPRoomInvite*)primitiveRoomInvites;
+- (void)setPrimitiveRoomInvites:(OTRManagedXMPPRoomInvite*)value;
+
+
+
+- (NSMutableSet*)primitiveRooms;
+- (void)setPrimitiveRooms:(NSMutableSet*)value;
 
 
 

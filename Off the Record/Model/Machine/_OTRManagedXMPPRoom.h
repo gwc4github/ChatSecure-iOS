@@ -14,6 +14,7 @@ extern const struct OTRManagedXMPPRoomAttributes {
 } OTRManagedXMPPRoomAttributes;
 
 extern const struct OTRManagedXMPPRoomRelationships {
+	__unsafe_unretained NSString *account;
 	__unsafe_unretained NSString *roomBuddies;
 	__unsafe_unretained NSString *roomMessages;
 } OTRManagedXMPPRoomRelationships;
@@ -21,6 +22,7 @@ extern const struct OTRManagedXMPPRoomRelationships {
 extern const struct OTRManagedXMPPRoomFetchedProperties {
 } OTRManagedXMPPRoomFetchedProperties;
 
+@class OTRManagedXMPPAccount;
 @class OTRManagedXMPPRoomBuddy;
 @class OTRManagedXMPPRoomMessage;
 
@@ -108,6 +110,13 @@ extern const struct OTRManagedXMPPRoomFetchedProperties {
 
 
 
+@property (nonatomic, strong) OTRManagedXMPPAccount *account;
+
+//- (BOOL)validateAccount:(id*)value_ error:(NSError**)error_;
+
+
+
+
 @property (nonatomic, strong) NSSet *roomBuddies;
 
 - (NSMutableSet*)roomBuddiesSet;
@@ -179,6 +188,11 @@ extern const struct OTRManagedXMPPRoomFetchedProperties {
 - (void)setPrimitiveRoomSubject:(NSString*)value;
 
 
+
+
+
+- (OTRManagedXMPPAccount*)primitiveAccount;
+- (void)setPrimitiveAccount:(OTRManagedXMPPAccount*)value;
 
 
 

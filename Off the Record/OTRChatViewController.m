@@ -529,18 +529,7 @@ typedef NS_ENUM(NSInteger, OTRChatViewTags) {
 {
     [super viewWillAppear:animated];
     
-    __weak OTRChatViewController * chatViewController = self;
-    __weak OTRChatInputBar * weakChatInputbar = chatInputBar;
-    [self.view addKeyboardPanningWithActionHandler:^(CGRect keyboardFrameInView) {
-        CGRect messageInputBarFrame = weakChatInputbar.frame;
-        messageInputBarFrame.origin.y = keyboardFrameInView.origin.y - messageInputBarFrame.size.height;
-        weakChatInputbar.frame = messageInputBarFrame;
-        
-        UIEdgeInsets tableViewContentInset = chatViewController.chatHistoryTableView.contentInset;
-        tableViewContentInset.bottom = chatViewController.view.frame.size.height-weakChatInputbar.frame.origin.y;
-        chatViewController.chatHistoryTableView.contentInset = chatViewController.chatHistoryTableView.scrollIndicatorInsets = tableViewContentInset;
-        [chatViewController scrollToBottomAnimated:NO];
-    }];
+    
     
     [self refreshView];
     [self updateChatState:NO];
@@ -548,18 +537,6 @@ typedef NS_ENUM(NSInteger, OTRChatViewTags) {
     if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"7.0")) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshView) name:UIContentSizeCategoryDidChangeNotification object:nil];
     }
-    
-    // KLUDGE: Work around keyboard visibility bug where chat input view is visible but keyboard is not
-    if (self.view.keyboardFrameInView.size.height == 0 && chatInputBar.frame.origin.y < self.view.frame.size.height - chatInputBar.frame.size.height) {
-        [chatInputBar.textView becomeFirstResponder];
-    }
-    // KLUDGE: If chatInputBar is beyond the bounds of the screen for some unknown reason, force it back into place
-    if (chatInputBar.frame.origin.y > self.view.frame.size.height - chatInputBar.frame.size.height) {
-        CGRect newFrame = chatInputBar.frame;
-        newFrame.origin.y = self.view.frame.size.height - chatInputBar.frame.size.height;
-        chatInputBar.frame = newFrame;
-    }
-
 }
 
 -(void)saveCurrentMessageText

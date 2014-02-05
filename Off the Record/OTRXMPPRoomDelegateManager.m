@@ -16,7 +16,7 @@
 
 - (OTRManagedXMPPRoom *)fetchOrCreteWithXMPPRoom:(XMPPRoom *)room
 {
-    return [OTRXMPPRoomStorage fetchOrCreateWithXMPPRoom:room];
+    return nil;
 }
 
 #pragma mark XMPPRoomDelegate Methods
@@ -82,9 +82,7 @@
 
 - (void)xmppRoomDidDestroy:(XMPPRoom *)sender
 {
-    OTRManagedXMPPRoom * room = [self fetchOrCreteWithXMPPRoom:sender];
-    [room MR_deleteEntity];
-    [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveOnlySelfAndWait];
+    
 }
 
 - (void)xmppRoom:(XMPPRoom *)sender occupantDidJoin:(XMPPJID *)occupantJID withPresence:(XMPPPresence *)presence

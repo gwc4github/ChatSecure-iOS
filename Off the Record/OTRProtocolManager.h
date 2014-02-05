@@ -21,7 +21,7 @@
 //  along with ChatSecure.  If not, see <http://www.gnu.org/licenses/>.
 
 #import <Foundation/Foundation.h>
-#import "OTRXMPPManager.h"
+
 #import "OTREncryptionManager.h"
 #import "OTRCodec.h"
 #import "OTRBuddyList.h"
@@ -30,6 +30,8 @@
 #import "OTRAccountsManager.h"
 
 @class OTROscarManager;
+@class XMPPStream;
+@class OTRXMPPManager;
 
 @interface OTRProtocolManager : NSObject
 
@@ -45,6 +47,7 @@
 
 - (void)loginAccount:(OTRManagedAccount *)account;
 - (void)loginAccounts:(NSArray *)accounts;
+- (OTRXMPPManager *)xmppManagerForStream:(XMPPStream *)stream;
 
 + (OTRProtocolManager*)sharedInstance; // Singleton method
 

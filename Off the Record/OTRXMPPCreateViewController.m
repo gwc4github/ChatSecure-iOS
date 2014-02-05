@@ -8,6 +8,8 @@
 
 #import "OTRXMPPCreateViewController.h"
 #import "Strings.h"
+#import "OTRXMPPManager.h"
+#import "OTRManagedXMPPAccount.h"
 
 #import "HITorManager.h"
 

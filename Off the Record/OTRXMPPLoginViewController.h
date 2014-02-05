@@ -22,6 +22,8 @@
 
 #import "OTRLoginViewController.h"
 
+@class OTRManagedXMPPAccount;
+
 @interface OTRXMPPLoginViewController : OTRLoginViewController
 
 @property (nonatomic,strong) OTRManagedXMPPAccount * account;

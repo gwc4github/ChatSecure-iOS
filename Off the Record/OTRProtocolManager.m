@@ -23,6 +23,7 @@
 #import "OTRProtocolManager.h"
 #import "OTROscarManager.h"
 #import "OTRManagedBuddy.h"
+#import "OTRXMPPManager.h"
 #import "OTRManagedOAuthAccount.h"
 #import "OTRConstants.h"
 
@@ -154,6 +155,20 @@ static OTRProtocolManager *sharedManager = nil;
         return [protocol isConnected];
     }
     return NO;
+    
+}
+
+- (OTRXMPPManager *)xmppManagerForStream:(XMPPStream *)stream
+{
+    NSArray * allManagers = [self.protocolManagers allValues];
+    
+    NSPredicate * filterPredicate = [NSPredicate predicateWithFormat:@"%K == %@",@"xmppStream",stream];
+    
+    NSArray * filteredArray = [allManagers filteredArrayUsingPredicate:filterPredicate];
+    if ([filteredArray count]) {
+        return [filteredArray firstObject];
+    }
+    return nil;
     
 }
 

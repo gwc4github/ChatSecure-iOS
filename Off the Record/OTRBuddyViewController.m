@@ -15,6 +15,7 @@
 #import "OTRConstants.h"
 #import "OTRUtilities.h"
 #import "OTRManagedStatusMessage.h"
+#import "OTRXMPPManager.h"
 
 #import "OTRManagedAccount.h"
 

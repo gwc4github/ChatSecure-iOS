@@ -38,6 +38,7 @@
 #import "OTRChooseAccountViewController.h"
 #import "OTRImages.h"
 #import "OTRUtilities.h"
+#import "OTRGroupChatViewController.h"
 
 #import "OTRBuddyCell.h"
 #import "OTRRecentBuddyCell.h"
@@ -433,16 +434,22 @@ static NSUInteger const buddiesSectionIndex = 2;
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
     }
-    OTRManagedBuddy * managedBuddy = [self tableView:tableView buddyforRowAtIndexPath:indexPath];
-    if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
-        [self.searchDisplayController   setActive:NO];
-    }
     
-    if (managedBuddy) {
-        [self enterConversationWithBuddy:managedBuddy];
+    if (indexPath.section == groupChatSectionIndex) {
+        OTRManagedXMPPRoom * room = [self.groupChatFetchedResultsController objectAtIndexPath:[NSIndexPath indexPathForItem:indexPath.row inSection:0]];
+        [self enterConversationWithRoom:room];
+        
     }
-
-    
+    else {
+        OTRManagedBuddy * managedBuddy = [self tableView:tableView buddyforRowAtIndexPath:indexPath];
+        if ([tableView isEqual:self.searchDisplayController.searchResultsTableView]) {
+            [self.searchDisplayController   setActive:NO];
+        }
+        
+        if (managedBuddy) {
+            [self enterConversationWithBuddy:managedBuddy];
+        }
+    }
 }
 
 - (void) tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -451,7 +458,17 @@ static NSUInteger const buddiesSectionIndex = 2;
     }
 }
 
--(void)enterConversationWithBuddy:(OTRManagedBuddy*)buddy
+- (void)enterConversationWithRoom:(OTRManagedXMPPRoom *)managedRoom
+{
+    if (managedRoom) {
+        OTRGroupChatViewController * groupViewController = [[OTRGroupChatViewController alloc] init];
+        groupViewController.managedRoom = managedRoom;
+        [self.navigationController pushViewController:groupViewController animated:YES];
+    }
+    
+}
+
+- (void)enterConversationWithBuddy:(OTRManagedBuddy*)buddy
 {
     if(!buddy) {
         return;

@@ -13,6 +13,7 @@ const struct OTRManagedXMPPRoomAttributes OTRManagedXMPPRoomAttributes = {
 };
 
 const struct OTRManagedXMPPRoomRelationships OTRManagedXMPPRoomRelationships = {
+	.account = @"account",
 	.roomBuddies = @"roomBuddies",
 	.roomMessages = @"roomMessages",
 };
@@ -118,6 +119,10 @@ const struct OTRManagedXMPPRoomFetchedProperties OTRManagedXMPPRoomFetchedProper
 
 
 
+
+@dynamic account;
+
+	
 
 @dynamic roomBuddies;
 

@@ -8,6 +8,8 @@
 
 #import "OTRJabberLoginViewController.h"
 
+#import "OTRManagedXMPPAccount.h"
+
 @interface OTRJabberLoginViewController ()
 
 @property (nonatomic,strong) UITableViewCell * selectedCell;

@@ -17,7 +17,7 @@ extern const struct OTRManagedXMPPRoomInviteRelationships {
 extern const struct OTRManagedXMPPRoomInviteFetchedProperties {
 } OTRManagedXMPPRoomInviteFetchedProperties;
 
-@class OTRManagedAccount;
+@class OTRManagedXMPPAccount;
 
 
 
@@ -66,7 +66,7 @@ extern const struct OTRManagedXMPPRoomInviteFetchedProperties {
 
 
 
-@property (nonatomic, strong) OTRManagedAccount *toAccount;
+@property (nonatomic, strong) OTRManagedXMPPAccount *toAccount;
 
 //- (BOOL)validateToAccount:(id*)value_ error:(NSError**)error_;
 
@@ -102,8 +102,8 @@ extern const struct OTRManagedXMPPRoomInviteFetchedProperties {
 
 
 
-- (OTRManagedAccount*)primitiveToAccount;
-- (void)setPrimitiveToAccount:(OTRManagedAccount*)value;
+- (OTRManagedXMPPAccount*)primitiveToAccount;
+- (void)setPrimitiveToAccount:(OTRManagedXMPPAccount*)value;
 
 
 @end

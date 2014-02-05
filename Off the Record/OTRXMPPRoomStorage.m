@@ -12,6 +12,8 @@
 #import "OTRManagedXMPPRoomMessage.h"
 #import "OTRManagedXMPPRoomBuddy.h"
 #import "OTRManagedXMPPRoomStatusMessage.h"
+#import "OTRProtocolManager.h"
+#import "OTRXMPPManager.h"
 
 #import "NSXMLElement+XEP_0203.h"
 
@@ -37,6 +39,7 @@
     managedMessage.room = managedRoom;
     managedMessage.fromBuddy = roomBuddy;
     managedMessage.message = [message body];
+    managedMessage.isIncomingValue = !outgoing;
     managedMessage.date = [NSDate date];
     
     if ([message delayedDeliveryDate]) {
@@ -47,11 +50,13 @@
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
 }
 
-+ (OTRManagedXMPPRoom *)fetchOrCreateWithXMPPRoom:(XMPPRoom *)xmppRoom
+- (OTRManagedXMPPRoom *)fetchOrCreateWithXMPPRoom:(XMPPRoom *)xmppRoom
 {
     OTRManagedXMPPRoom * room = [OTRManagedXMPPRoom fetchRoomWithJID:[xmppRoom.roomJID full]];
     if (!room) {
         room = [OTRManagedXMPPRoom MR_createEntity];
+        room.account = [self.xmppManager.account MR_inThreadContext];
+        
         room.roomJID = [xmppRoom.roomJID full];
         room.roomSubject = xmppRoom.roomSubject;
         room.isJoinedValue = xmppRoom.isJoined;
@@ -97,7 +102,7 @@
  **/
 - (BOOL)configureWithParent:(XMPPRoom *)aParent queue:(dispatch_queue_t)queue {
     
-    OTRManagedXMPPRoom * managedRoom = [OTRXMPPRoomStorage fetchOrCreateWithXMPPRoom:aParent];
+    OTRManagedXMPPRoom * managedRoom = [self fetchOrCreateWithXMPPRoom:aParent];
     
     if (!managedRoom) {
         return NO;
@@ -112,7 +117,7 @@
  **/
 - (void)handlePresence:(XMPPPresence *)presence room:(XMPPRoom *)room
 {
-    OTRManagedXMPPRoom * managedRoom = [OTRXMPPRoomStorage fetchOrCreateWithXMPPRoom:room];
+    OTRManagedXMPPRoom * managedRoom = [self fetchOrCreateWithXMPPRoom:room];
     OTRManagedXMPPRoomBuddy * roomBuddy = [OTRXMPPRoomStorage fetchOrCreateWithJIDString:presence.fromStr inRoom:managedRoom];
     
     NSXMLElement *item = [[presence elementForName:@"x" xmlns:XMPPMUCAdminNamespace] elementForName:@"item"];
@@ -131,7 +136,7 @@
 - (void)handleIncomingMessage:(XMPPMessage *)message room:(XMPPRoom *)room
 {
     
-    OTRManagedXMPPRoom * managedRoom = [OTRXMPPRoomStorage fetchOrCreateWithXMPPRoom:room];
+    OTRManagedXMPPRoom * managedRoom = [self fetchOrCreateWithXMPPRoom:room];
     
     if (![self isDuplicateMessage:message inRoom:managedRoom]) {
         [self insertMessage:message inRoom:managedRoom outgoing:NO];
@@ -141,7 +146,7 @@
 }
 - (void)handleOutgoingMessage:(XMPPMessage *)message room:(XMPPRoom *)room
 {
-    OTRManagedXMPPRoom * managedRoom = [OTRXMPPRoomStorage fetchOrCreateWithXMPPRoom:room];
+    OTRManagedXMPPRoom * managedRoom = [self fetchOrCreateWithXMPPRoom:room];
     
     if (![self isDuplicateMessage:message inRoom:managedRoom]) {
         [self insertMessage:message inRoom:managedRoom outgoing:YES];
@@ -154,7 +159,7 @@
 - (void)handleDidLeaveRoom:(XMPPRoom *)room
 {
     DDLogInfo(@"%@ - @%@",THIS_METHOD,THIS_METHOD);
-    OTRManagedXMPPRoom * managedRoom = [OTRXMPPRoomStorage fetchOrCreateWithXMPPRoom:room];
+    OTRManagedXMPPRoom * managedRoom = [self fetchOrCreateWithXMPPRoom:room];
     managedRoom.isJoinedValue = NO;
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveOnlySelfAndWait];
 }
@@ -165,7 +170,7 @@
 - (void)handleDidJoinRoom:(XMPPRoom *)room withNickname:(NSString *)nickname
 {
     DDLogInfo(@"%@ - @%@",THIS_METHOD,THIS_METHOD);
-    OTRManagedXMPPRoom * managedRoom = [OTRXMPPRoomStorage fetchOrCreateWithXMPPRoom:room];
+    OTRManagedXMPPRoom * managedRoom = [self fetchOrCreateWithXMPPRoom:room];
     managedRoom.isJoinedValue = YES;
     managedRoom.myNickname = nickname;
     [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveOnlySelfAndWait];

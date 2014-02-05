@@ -1,5 +1,5 @@
 #import "OTRManagedXMPPRoom.h"
-
+#import "XMPPJID.h"
 
 @interface OTRManagedXMPPRoom ()
 
@@ -9,6 +9,16 @@
 
 
 @implementation OTRManagedXMPPRoom
+
+- (NSString *)roomDomain
+{
+    [[XMPPJID jidWithString:self.roomJID] domain];
+}
+
+- (NSString *)roomName
+{
+    [[XMPPJID jidWithString:self.roomJID] user];
+}
 
 + (instancetype)fetchRoomWithJID:(NSString *)JIDString
 {

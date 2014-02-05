@@ -55,6 +55,8 @@
 #import "XMPPRoom.h"
 #import "OTRXMPPRoomStorage.h"
 #import "OTRManagedXMPPRoomInvite.h"
+#import "OTRManagedXMPPRoomMessage.h"
+#import "OTRManagedXMPPRoom.h"
 
 static NSTimeInterval const kOTRChatStatePausedTimeout   = 5;
 static NSTimeInterval const kOTRChatStateInactiveTimeout = 120;
@@ -102,13 +104,15 @@ NSString *const OTRXMPPRegisterFailedNotificationName    = @"OTRXMPPRegisterFail
         isRegisteringNewAccount = NO;
         self.isConnected = NO;
         self.account = (OTRManagedXMPPAccount*)newAccount;
+        buddyTimers = [NSMutableDictionary dictionary];
+        self.xmppRoomDictionary = [NSMutableDictionary dictionary];
 
         backgroundQueue = dispatch_queue_create("buddy.background", NULL);
         
         // Setup the XMPP stream
         [self setupStream];
         
-        buddyTimers = [NSMutableDictionary dictionary];
+        
     }
     
     return self;
@@ -298,6 +302,7 @@ NSString *const OTRXMPPRegisterFailedNotificationName    = @"OTRXMPPRegisterFail
 {
     if (!_xmppRoomStorage) {
         _xmppRoomStorage = [[OTRXMPPRoomStorage alloc] init];
+        _xmppRoomStorage.xmppManager = self;
     }
     return _xmppRoomStorage;
 }
@@ -943,9 +948,11 @@ managedBuddyObjectID
         NSData * certifcateData = [OTRCertificatePinning dataForCertificate:[OTRCertificatePinning certForTrust:trust]];
         [self failedToConnect:[OTRXMPPError errorForSSLSatus:status withCertData:certifcateData hostname:hostname]];
     });
-    
-    
-    
 }
 
+- (void)sendGroupMessage:(NSString *)message toRoomJID:(NSString *)roomJID
+{
+    XMPPRoom * room = [self.xmppRoomDictionary objectForKey:roomJID];
+    [room sendMessageWithBody:message];
+}
 @end
