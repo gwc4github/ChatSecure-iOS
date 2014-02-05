@@ -10,7 +10,7 @@
 
 @class OTRXMPPManagedPresenceSubscriptionRequest;
 
-@interface OTRSubscriptionRequestsViewController : UITableViewController <NSFetchedResultsControllerDelegate, UIActionSheetDelegate>
+@interface OTRSubscriptionRequestsViewController : UITableViewController <NSFetchedResultsControllerDelegate, UIActionSheetDelegate,UIAlertViewDelegate>
 
 
 @property (nonatomic, strong) NSFetchedResultsController * subscriptionRequestsFetchedResultsController;

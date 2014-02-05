@@ -203,15 +203,17 @@ static NSUInteger const groupChatAlertViewTag    = 223;
         if (actionSheet.tag == groupChatAlertViewTag) {
             if (actionSheet.destructiveButtonIndex != buttonIndex) {
                 //Join Room
-                OTRXMPPManager * manager = (OTRXMPPManager *)[[OTRProtocolManager sharedInstance] protocolForAccount:self.currentSelectedRoomInvite.toAccount];
-                XMPPRoom * room = [[XMPPRoom alloc] initWithRoomStorage:manager.xmppRoomStorage jid:[XMPPJID jidWithString:self.currentSelectedRoomInvite.roomJID]];
-                [room activate:manager.xmppStream];
+                UIAlertView * alertView = [[UIAlertView alloc] initWithTitle:@"Nickname" message:nil delegate:self cancelButtonTitle:CANCEL_STRING otherButtonTitles:OK_STRING, nil];
+                alertView.alertViewStyle = UIAlertViewStylePlainTextInput;
+                [alertView show];
                 
-                [room joinRoomUsingNickname:@"THis cool Name" history:nil];
             }
-            [self.currentSelectedRoomInvite MR_deleteEntity];
-            [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
-            [self.tableView reloadData];
+            else {
+                [self.currentSelectedRoomInvite MR_deleteEntity];
+                [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
+                [self.tableView reloadData];
+            }
+            
         }
         else if (actionSheet.tag == subscriptionAlertViewTag)
         {
@@ -229,11 +231,19 @@ static NSUInteger const groupChatAlertViewTag    = 223;
             [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
             
         }
-        
-        
     }
-    
-    
 }
 
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    NSString * nickname = [alertView textFieldAtIndex:0].text;
+    OTRXMPPManager * manager = (OTRXMPPManager *)[[OTRProtocolManager sharedInstance] protocolForAccount:self.currentSelectedRoomInvite.toAccount];
+    XMPPRoom * room = [[XMPPRoom alloc] initWithRoomStorage:manager.xmppRoomStorage jid:[XMPPJID jidWithString:self.currentSelectedRoomInvite.roomJID]];
+    [room activate:manager.xmppStream];
+    
+    [room joinRoomUsingNickname:nickname history:nil];
+    [self.currentSelectedRoomInvite MR_deleteEntity];
+    [[NSManagedObjectContext MR_contextForCurrentThread] MR_saveToPersistentStoreAndWait];
+    [self.tableView reloadData];
+}
 @end
