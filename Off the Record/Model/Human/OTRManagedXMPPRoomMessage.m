@@ -1,15 +1,22 @@
 #import "OTRManagedXMPPRoomMessage.h"
 #import "OTRUtilities.h"
 
+#import "OTRManagedXMPPRoomBuddy.h"
+
 
 @interface OTRManagedXMPPRoomMessage ()
 
-// Private interface goes here.
+
 
 @end
 
 
 @implementation OTRManagedXMPPRoomMessage
+
+- (NSString *)fromBuddyDisplayName
+{
+    return self.fromBuddy.nickname;
+}
 
 + (OTRManagedXMPPRoomMessage *)newMessage
 {

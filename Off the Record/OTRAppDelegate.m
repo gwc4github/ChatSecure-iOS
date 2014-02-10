@@ -56,8 +56,8 @@
 {
     [DDLog addLogger:[DDTTYLogger sharedInstance]];
     
-    [[BITHockeyManager sharedHockeyManager] configureWithBetaIdentifier:kOTRHockeyBetaIdentifier
-                                                         liveIdentifier:kOTRHockeyLiveIdentifier
+    [[BITHockeyManager sharedHockeyManager] configureWithBetaIdentifier:HOCKEY_LIVE_IDENTIFIER
+                                                         liveIdentifier:HOCKEY_BETA_IDENTIFIER
                                                                delegate:self];
     [[BITHockeyManager sharedHockeyManager] startManager];
     

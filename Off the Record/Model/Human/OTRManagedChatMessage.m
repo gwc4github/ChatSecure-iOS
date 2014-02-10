@@ -12,6 +12,11 @@
 
 @implementation OTRManagedChatMessage
 
+- (NSString *)fromBuddyDisplayName
+{
+    return self.buddy.displayName;
+}
+
 +(OTRManagedChatMessage*)newMessageToBuddy:(OTRManagedBuddy *)theBuddy message:(NSString *)theMessage {
     OTRManagedChatMessage *message = [OTRManagedChatMessage newMessageWithBuddy:theBuddy message:theMessage];
     message.isIncoming = NO;

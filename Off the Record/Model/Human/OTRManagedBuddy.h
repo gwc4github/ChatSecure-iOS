@@ -33,9 +33,9 @@
 
 @interface OTRManagedBuddy : _OTRManagedBuddy
 
--(void)receiveChatStateMessage:(OTRChatState) chatState;
+- (void)receiveChatStateMessage:(OTRChatState) chatState;
 
--(BOOL)protocolIsXMPP;
+- (BOOL)protocolIsXMPP;
 
 - (void)sendActiveChatState;
 - (void)sendInactiveChatState;

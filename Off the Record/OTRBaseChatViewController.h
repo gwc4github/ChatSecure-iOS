@@ -11,12 +11,15 @@
 #import "OTRChatInputBar.h"
 
 @class OTRTitleSubtitleView;
+@class OTRManagedChatMessage;
 
 @interface OTRBaseChatViewController : UIViewController <UITableViewDataSource,UITableViewDelegate,NSFetchedResultsControllerDelegate,OTRChatInputBarDelegate,UISplitViewControllerDelegate>
 
 @property (nonatomic,strong) UITableView * tableView;
 @property (nonatomic,strong) NSFetchedResultsController * messagesFetchedResultsController;
 @property (nonatomic,strong) OTRTitleSubtitleView * titleView;
+
+- (BOOL)showUsernameForMessage:(OTRManagedChatMessage *)chatMessage;
 
 
 @end

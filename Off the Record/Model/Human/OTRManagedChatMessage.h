@@ -2,6 +2,8 @@
 
 @interface OTRManagedChatMessage : _OTRManagedChatMessage {}
 
+- (NSString *)fromBuddyDisplayName;
+
 
 +(OTRManagedChatMessage*)newMessageFromBuddy:(OTRManagedBuddy *)theBuddy message:(NSString *)theMessage encrypted:(BOOL)encryptionStatus delayedDate:(NSDate *)date;
 +(OTRManagedChatMessage *)newMessageToBuddy:(OTRManagedBuddy *)theBuddy message:(NSString *)theMessage encrypted:(BOOL)encryptionStatus;

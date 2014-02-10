@@ -619,7 +619,7 @@ typedef NS_ENUM(NSInteger, OTRChatViewTags) {
         if([messageOrStatus isKindOfClass:[OTRManagedChatMessage class]]) {
 
             OTRManagedChatMessage * message = (OTRManagedChatMessage *)messageOrStatus;
-            height = [OTRMessageTableViewCell heightForMesssage:message.message showDate:showDate];
+            height = [OTRMessageTableViewCell heightForMesssage:message.message showDate:showDate showUsername:NO];
             
         }
         else {

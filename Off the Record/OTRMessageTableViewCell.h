@@ -12,21 +12,19 @@
 #import "OTRChatBubbleView.h"
 
 @interface OTRMessageTableViewCell : UITableViewCell <TTTAttributedLabelDelegate>
-{
-    NSLayoutConstraint * dateHeightConstraint;
-}
 
 @property (nonatomic, strong) OTRManagedChatMessage * message;
 @property (nonatomic, strong) UILabel * dateLabel;
 @property (nonatomic) BOOL showDate;
 
 @property (nonatomic, strong) OTRChatBubbleView * bubbleView;
+@property (nonatomic, strong) UILabel * messageUsernameLabel;
 
 
 -(id)initWithMessage:(OTRManagedChatMessage *)message withDate:(BOOL)showDate reuseIdentifier:(NSString*)identifier;
 
 + (CGSize)messageTextLabelSize:(NSString *)message;
 
-+ (CGFloat)heightForMesssage:(NSString *)message showDate:(BOOL)showDate;
++ (CGFloat)heightForMesssage:(NSString *)message showDate:(BOOL)showDate showUsername:(BOOL)showUsername;
 
 @end

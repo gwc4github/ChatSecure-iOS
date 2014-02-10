@@ -58,6 +58,14 @@
     return _messagesFetchedResultsController;
 }
 
+- (BOOL)showUsernameForMessage:(OTRManagedChatMessage *)chatMessage
+{
+    if (chatMessage.isIncomingValue) {
+        return YES;
+    }
+    return NO;
+}
+
 //////////////////////////////////////////////////////////////////////////
 #pragma - mark UITableViewDataSource Methods
 /////////////////////////////////////////////////////////////////////

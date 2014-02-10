@@ -142,6 +142,11 @@ static NSTimeInterval const messageSentDateShowTimeInterval = 5*60; // 5 minutes
     }
 }
 
+- (BOOL)showUsernameForMessage:(OTRManagedChatMessage *)chatMessage
+{
+    return NO;
+}
+
 - (BOOL)showDateForMessageAtIndexPath:(NSIndexPath *)indexPath {
     
     if (indexPath.row < [self.showDateForRowArray count]) {
@@ -190,10 +195,12 @@ static NSTimeInterval const messageSentDateShowTimeInterval = 5*60; // 5 minutes
     {
         BOOL showDate = [self showDateForMessageAtIndexPath:indexPath];
         id messageOrStatus = [self.messagesFetchedResultsController objectAtIndexPath:indexPath];
-        if([messageOrStatus isKindOfClass:[OTRManagedMessage class]]) {
+        if([messageOrStatus isKindOfClass:[OTRManagedChatMessage class]]) {
+             OTRManagedChatMessage * message = (OTRManagedChatMessage *)messageOrStatus;
             
-            OTRManagedMessage * message = (OTRManagedChatMessage *)messageOrStatus;
-            height = [OTRMessageTableViewCell heightForMesssage:message.message showDate:showDate];
+            BOOL showUsername = [self showUsernameForMessage:message];
+           
+            height = [OTRMessageTableViewCell heightForMesssage:message.message showDate:showDate showUsername:showUsername];
             
         }
         else {
@@ -219,6 +226,7 @@ static NSTimeInterval const messageSentDateShowTimeInterval = 5*60; // 5 minutes
     if ([message isKindOfClass:[OTRManagedChatMessage class]]) {
         OTRManagedChatMessage *chatMessage = (OTRManagedChatMessage *)message;
         BOOL showDate = [self showDateForMessageAtIndexPath:indexPath];
+        BOOL showUsername = [self showUsernameForMessage:chatMessage];
         cell = [tableView dequeueReusableCellWithIdentifier:messageCellIdentifier];
         if (!cell) {
             cell = [[OTRMessageTableViewCell alloc] initWithMessage:chatMessage withDate:showDate reuseIdentifier:messageCellIdentifier];
@@ -226,7 +234,13 @@ static NSTimeInterval const messageSentDateShowTimeInterval = 5*60; // 5 minutes
         else if([cell isKindOfClass:[OTRMessageTableViewCell class]]){
             ((OTRMessageTableViewCell*)cell).message = chatMessage;
             ((OTRMessageTableViewCell*)cell).showDate = showDate;
-            
+        }
+        
+        if (showUsername) {
+            ((OTRMessageTableViewCell*)cell).messageUsernameLabel.text = [chatMessage fromBuddyDisplayName];
+        }
+        else {
+            ((OTRMessageTableViewCell*)cell).messageUsernameLabel.text = nil;
         }
     }
     else if ([message isKindOfClass:[OTRManagedStatusMessage class]] || [message isKindOfClass:[OTRManagedEncryptionMessage class]])

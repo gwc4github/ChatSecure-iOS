@@ -15,9 +15,17 @@
 #import "OTRAppDelegate.h"
 
 #import "OTRUtilities.h"
+#import "OTRColors.h"
 
 
 static CGFloat const messageTextWidthMax = 180;
+
+@interface OTRMessageTableViewCell ()
+
+@property (nonatomic, strong) NSLayoutConstraint * dateHeightConstraint;
+
+@end
+
 
 @implementation OTRMessageTableViewCell
 
@@ -47,7 +55,15 @@ static CGFloat const messageTextWidthMax = 180;
         label.delegate = self;
         self.bubbleView.messageTextLabel = label;
         
+        self.messageUsernameLabel= [[UILabel alloc] initWithFrame:CGRectZero];
+        self.messageUsernameLabel.font = [UIFont systemFontOfSize:sentDateFontSize];
+        self.messageUsernameLabel.textColor = [UIColor darkGrayColor];
+        self.messageUsernameLabel.backgroundColor = [UIColor clearColor];
+        self.messageUsernameLabel.translatesAutoresizingMaskIntoConstraints = NO;
+    
+        
         [self.contentView addSubview:self.bubbleView];
+        [self.contentView addSubview:self.messageUsernameLabel];
         [self setupConstraints];
         
         [self setMessage:newMessage];
@@ -139,26 +155,44 @@ static CGFloat const messageTextWidthMax = 180;
                                              multiplier:1.0
                                                constant:0.0];
     [self addConstraint:constraint];
+    
+    ///username label
+    constraint = [NSLayoutConstraint constraintWithItem:self.messageUsernameLabel
+                                              attribute:NSLayoutAttributeLeft
+                                              relatedBy:NSLayoutRelationEqual
+                                                 toItem:self.bubbleView.messageTextLabel
+                                              attribute:NSLayoutAttributeLeft
+                                             multiplier:1.0
+                                               constant:0.0];
+    [self addConstraint:constraint];
+    constraint = [NSLayoutConstraint constraintWithItem:self.messageUsernameLabel
+                                              attribute:NSLayoutAttributeTop
+                                              relatedBy:NSLayoutRelationEqual
+                                                 toItem:self.bubbleView
+                                              attribute:NSLayoutAttributeBottom
+                                             multiplier:1.0
+                                               constant:0.0];
+    [self addConstraint:constraint];
 }
 
 - (void)updateConstraints
 {
     [super updateConstraints];
     
-    [self removeConstraint:dateHeightConstraint];
+    [self removeConstraint:self.dateHeightConstraint];
     CGFloat dateheight = 0.0;
     if (self.showDate) {
         dateheight = sentDateFontSize+5;
     }
     
-    dateHeightConstraint = [NSLayoutConstraint constraintWithItem:self.dateLabel
+    self.dateHeightConstraint = [NSLayoutConstraint constraintWithItem:self.dateLabel
                                               attribute:NSLayoutAttributeHeight
                                               relatedBy:NSLayoutRelationEqual
                                                  toItem:nil
                                               attribute:NSLayoutAttributeNotAnAttribute
                                              multiplier:1.0
                                                constant:dateheight];
-    [self addConstraint:dateHeightConstraint];
+    [self addConstraint:self.dateHeightConstraint];
     
 }
 
@@ -222,6 +256,15 @@ static CGFloat const messageTextWidthMax = 180;
     }
     
     return labelSize.height + padding + dateHeight;
+}
+
++ (CGFloat)heightForMesssage:(NSString *)message showDate:(BOOL)showDate showUsername:(BOOL)showUsername
+{
+    CGFloat height = [self heightForMesssage:message showDate:showDate];
+    if (showUsername) {
+        height += sentDateFontSize;
+    }
+    return height;
 }
 
 + (NSDateFormatter *)defaultDateFormatter
